@@ -5,6 +5,8 @@
     <title>Shiro – Quiz Modes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <link rel="stylesheet" href="assets/ui.css">
+    <script src="assets/ui.js" defer></script>
     <style>
         * {
             box-sizing: border-box;
@@ -27,8 +29,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 32px;
-            height: 72px;
+            padding: 0 clamp(16px, 5vw, 56px);
+            height: clamp(64px, 10vw, 80px);
             background: #ffffff;
         }
 
@@ -39,15 +41,15 @@
         }
 
         .nav-left img {
-            height: 200px;
-            width: 200px;
+            height: clamp(48px, 9vw, 80px);
+            width: clamp(48px, 9vw, 80px);
             object-fit: contain;
         }
 
         .brand-name {
             font-family: 'Nunito', sans-serif;
             font-weight: 700;
-            font-size: 22px;
+            font-size: clamp(20px, 2.6vw, 28px);
             letter-spacing: -1px;
         }
 
@@ -68,16 +70,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 16px;
+            padding: clamp(24px, 6vw, 84px) clamp(16px, 5vw, 48px);
         }
 
         .container {
-            max-width: 900px;
-            width: 100%;
+            max-width: 960px;
+            width: min(100%, 960px);
         }
 
         .page-title {
-            font-size: 24px;
+            font-size: clamp(22px, 4vw, 30px);
             font-weight: 600;
             margin-bottom: 8px;
         }
@@ -90,18 +92,20 @@
 
         .mode-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: clamp(16px, 3vw, 24px);
         }
 
         .mode-card {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 20px 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 16px 40px rgba(15,23,42,0.08);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            min-height: 280px;
+            gap: 12px;
         }
 
         .mode-name {
@@ -126,21 +130,20 @@
         .btn-start {
             border: none;
             border-radius: 999px;
-            padding: 8px 0;
+            padding: 10px 0;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
             background: #22c55e;
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(34,197,94,0.35);
-            transition: background 0.1s ease, transform 0.05s ease, box-shadow 0.05s ease;
+            box-shadow: 0 10px 24px rgba(34,197,94,0.35);
+            --hover-shadow: 0 16px 32px rgba(34,197,94,0.45);
+            --active-shadow: 0 8px 18px rgba(34,197,94,0.35);
         }
 
         .btn-start:hover {
             background: #16a34a;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(34,197,94,0.4);
         }
 
         .badge {
@@ -171,6 +174,13 @@
             .mode-grid {
                 grid-template-columns: 1fr;
             }
+
+            .navbar {
+                flex-direction: column;
+                gap: 8px;
+                height: auto;
+                padding: 16px;
+            }
         }
     </style>
 </head>
@@ -180,9 +190,9 @@
         <img src="assets/logo.png" alt="Shiro logo">
         <div class="brand-name">Shiro</div>
     </div>
-    <div class="nav-right" id="btn-logout">
+    <button type="button" class="nav-right" id="btn-logout">
         Return
-    </div>
+    </button>
 </header>
 
 <main class="main">
@@ -207,7 +217,7 @@
                         ~10 questions • recommended for first-time users
                     </div>
                 </div>
-                <button class="btn-start" id="btn-easy">
+                <button type="button" class="btn-start" id="btn-easy">
                     Start Easy mode
                 </button>
             </div>
@@ -225,7 +235,7 @@
                         ~15 questions • mixed difficulty
                     </div>
                 </div>
-                <button class="btn-start" id="btn-medium">
+                <button type="button" class="btn-start" id="btn-medium">
                     Start Medium mode
                 </button>
             </div>
@@ -242,7 +252,7 @@
                         ~20 questions • advanced difficulty
                     </div>
                 </div>
-                <button class="btn-start" id="btn-hard">
+                <button type="button" class="btn-start" id="btn-hard">
                     Start Hard mode
                 </button>
             </div>

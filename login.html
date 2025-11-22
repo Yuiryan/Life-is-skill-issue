@@ -5,6 +5,8 @@
     <title>Shiro – Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <link rel="stylesheet" href="assets/ui.css">
+    <script src="assets/ui.js" defer></script>
     <style>
         * {
             box-sizing: border-box;
@@ -26,8 +28,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 32px;
-            height: 72px;
+            padding: 0 clamp(16px, 4vw, 48px);
+            height: clamp(64px, 10vw, 76px);
             background: #ffffff;
         }
 
@@ -38,15 +40,15 @@
         }
 
         .nav-left img {
-            height: 200px;
-            width: 200px;
+            height: clamp(48px, 9vw, 72px);
+            width: clamp(48px, 9vw, 72px);
             object-fit: contain;
         }
 
         .brand-name {
             font-family: 'Nunito', sans-serif;
             font-weight: 700;
-            font-size: 22px;
+            font-size: clamp(20px, 2.6vw, 26px);
             letter-spacing: -1px;
         }
 
@@ -66,15 +68,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 16px;
+            padding: clamp(24px, 6vw, 72px) clamp(16px, 4vw, 32px);
         }
 
         .login-card {
             background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-            padding: 28px 24px;
-            max-width: 420px;
+            border-radius: 20px;
+            box-shadow: 0 16px 40px rgba(15,23,42,0.08);
+            padding: clamp(24px, 4vw, 36px);
+            max-width: min(420px, 100%);
             width: 100%;
         }
 
@@ -115,7 +117,7 @@
 
         .btn-primary {
             width: 100%;
-            padding: 10px 0;
+            padding: 12px 0;
             border-radius: 999px;
             border: none;
             background: #22c55e;
@@ -123,9 +125,11 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+            box-shadow: 0 10px 24px rgba(34,197,94,0.35);
             margin-top: 4px;
             margin-bottom: 12px;
+            --hover-shadow: 0 16px 32px rgba(34,197,94,0.45);
+            --active-shadow: 0 8px 18px rgba(34,197,94,0.35);
         }
 
         .btn-primary:hover {
@@ -146,6 +150,42 @@
         .small-text a:hover {
             text-decoration: underline;
         }
+
+        .auth-disabled {
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #fecaca;
+            background: #fef2f2;
+            color: #b91c1c;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auth-disabled span {
+            flex: 1;
+        }
+
+        .btn-primary.is-disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
+        }
+
+        @media (max-width: 520px) {
+            .navbar {
+                flex-direction: column;
+                gap: 8px;
+                height: auto;
+                padding: 16px;
+            }
+
+            .login-card {
+                border-radius: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -155,9 +195,9 @@
         <div class="brand-name">Shiro</div>
     </div>
     <!-- Dùng id để JS bắt sự kiện & đổi ngôn ngữ -->
-    <div class="nav-right" id="back-home">
+    <button type="button" class="nav-right" id="back-home">
         Back to home
-    </div>
+    </button>
 </header>
 
 <main class="main">
@@ -178,23 +218,24 @@
         </form>
 
         <div class="small-text" id="choose-other">
-            Or <a href="login_choose.html">choose another login method</a>.
+            Other login methods are temporarily disabled.
+        </div>
+
+        <div class="auth-disabled">
+            <span id="auth-disabled-text">Login temporarily disabled.</span>
         </div>
     </div>
 </main>
 
 <script>
-    // xử lý click nút back
-    document.getElementById("back-home").addEventListener("click", () => {
-        window.location.href = "index.html";
-    });
+    const backHomeBtn   = document.getElementById("back-home");
+    const loginForm     = document.getElementById("login-form");
+    const loginButton   = document.getElementById("btn-login");
+    const chooseOtherEl = document.getElementById("choose-other");
+    const disabledTextEl = document.getElementById("auth-disabled-text");
 
-    // Demo: xử lý login tạm thời
-    document.getElementById("login-form").addEventListener("submit", function(e) {
-        e.preventDefault();
-        alert("Demo login: ở đây sau này bạn xử lý backend / API thật.");
-        // Sau khi login xong bạn muốn sang quiz_home:
-        window.location.href = "quiz_home.html";
+    backHomeBtn.addEventListener("click", () => {
+        window.location.href = "index.html";
     });
 
     // ===== ĐA NGÔN NGỮ =====
@@ -206,7 +247,9 @@
             password: "Password",
             button: "Log in",
             backHome: "Back to home",
-            chooseOtherHtml: 'Or <a href="login_choose.html">choose another login method</a>.'
+            altMethodText: "Other login methods are temporarily disabled.",
+            disabledBanner: "🔒 Login is temporarily unavailable.",
+            disabledAlert: "Login is currently turned off. Please check back later."
         },
         vi: {
             title: "Đăng nhập vào Shiro",
@@ -215,7 +258,9 @@
             password: "Mật khẩu",
             button: "Đăng nhập",
             backHome: "Quay về trang chính",
-            chooseOtherHtml: 'Hoặc <a href="login_choose.html">chọn cách đăng nhập khác</a>.'
+            altMethodText: "Các cách đăng nhập khác đang tạm dừng.",
+            disabledBanner: "🔒 Tính năng đăng nhập đang tạm khóa.",
+            disabledAlert: "Tính năng đăng nhập đang tạm thời vô hiệu hoá, vui lòng quay lại sau."
         },
         jp: {
             title: "Shiroにログイン",
@@ -224,9 +269,13 @@
             password: "パスワード",
             button: "ログイン",
             backHome: "ホームに戻る",
-            chooseOtherHtml: 'または <a href="login_choose.html">別のログイン方法を選ぶ</a>。'
+            altMethodText: "他のログイン方法は一時停止中です。",
+            disabledBanner: "🔒 ログイン機能は現在一時停止中です。",
+            disabledAlert: "現在ログイン機能は停止しています。後でもう一度お試しください。"
         }
     };
+
+    let disabledAlertMessage = loginTranslations.en.disabledAlert;
 
     function applyLoginLang(lang) {
         const t = loginTranslations[lang] || loginTranslations.en;
@@ -234,12 +283,22 @@
         document.getElementById("login-subtitle").textContent = t.subtitle;
         document.getElementById("label-email").textContent = t.email;
         document.getElementById("label-password").textContent = t.password;
-        document.getElementById("btn-login").textContent = t.button;
-        document.getElementById("back-home").textContent = t.backHome;
-        document.getElementById("choose-other").innerHTML = t.chooseOtherHtml;
+        loginButton.textContent = t.button;
+        backHomeBtn.textContent = t.backHome;
+    chooseOtherEl.textContent = t.altMethodText;
+        disabledTextEl.textContent = t.disabledBanner;
+        disabledAlertMessage = t.disabledAlert;
     }
 
-    // đọc lang đã chọn ở index
+    const showDisabledAlert = (event) => {
+        if (event) event.preventDefault();
+        alert(disabledAlertMessage);
+    };
+
+    loginForm.addEventListener("submit", showDisabledAlert);
+    loginButton.addEventListener("click", showDisabledAlert);
+    loginButton.classList.add("is-disabled");
+
     const savedLang = localStorage.getItem("shiroLang") || "en";
     applyLoginLang(savedLang);
 </script>

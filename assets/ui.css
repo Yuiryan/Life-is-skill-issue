@@ -1,0 +1,83 @@
+:root {
+    --ease-spring: cubic-bezier(.16, 1, .3, 1);
+    --motion-duration: .55s;
+    --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.12);
+    --shadow-strong: 0 20px 40px rgba(15, 23, 42, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --motion-duration: 0.01s;
+    }
+}
+
+.motion-element {
+    opacity: 0;
+    animation: surfacePop var(--motion-duration) var(--ease-spring) forwards;
+    animation-delay: var(--stagger-delay, 0ms);
+    will-change: transform, opacity;
+}
+
+.interactive-surface {
+    transition:
+        transform 220ms var(--ease-spring),
+        box-shadow 220ms var(--ease-spring),
+        background-color 140ms linear,
+        border-color 140ms linear,
+        color 140ms linear,
+        filter 140ms linear;
+}
+
+.interactive-surface:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: var(--hover-shadow, var(--shadow-soft));
+}
+
+.interactive-surface:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 3px;
+}
+
+.interactive-surface.is-pressed,
+.interactive-surface:active {
+    transform: translateY(1px) scale(0.97);
+    box-shadow: var(--active-shadow, var(--shadow-soft));
+    filter: brightness(0.96);
+}
+
+.lang-option,
+.nav-right {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.lang-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lang-option:focus-visible .lang-label,
+.nav-right:focus-visible {
+    color: #111827;
+}
+
+button {
+    font-family: inherit;
+}
+
+@keyframes surfacePop {
+    0% {
+        opacity: 0;
+        transform: translateY(16px) scale(0.96);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-4px) scale(1.03);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

@@ -5,6 +5,8 @@
     <title>Shiro – Hard Quiz</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <link rel="stylesheet" href="assets/ui.css">
+    <script src="assets/ui.js" defer></script>
     <style>
         *{
             box-sizing:border-box;
@@ -28,12 +30,12 @@
         }
 
         .navbar{
-            height:64px;
+            height:clamp(60px,9vw,72px);
             border-bottom:1px solid #e5e7eb;
             display:flex;
             align-items:center;
             justify-content:space-between;
-            padding:0 24px;
+            padding:0 clamp(16px,4vw,48px);
             background:#fff;
         }
 
@@ -44,15 +46,15 @@
         }
 
         .nav-left img{
-            height:36px;
-            width:36px;
+            height:clamp(40px,8vw,64px);
+            width:clamp(40px,8vw,64px);
             object-fit:contain;
         }
 
         .brand-name{
             font-family:'Nunito',sans-serif;
             font-weight:700;
-            font-size:20px;
+            font-size:clamp(18px,2.6vw,24px);
         }
 
         .nav-right{
@@ -68,17 +70,17 @@
             display:flex;
             justify-content:center;
             align-items:center;
-            padding:24px;
+            padding:clamp(16px,5vw,64px);
         }
 
         .card{
             background:#fff;
             color:#111827;
-            border-radius:20px;
-            padding:24px 24px 20px;
+            border-radius:24px;
+            padding:clamp(20px,4vw,36px);
             max-width:720px;
-            width:100%;
-            box-shadow:0 16px 40px rgba(15,23,42,.12);
+            width:min(100%,720px);
+            box-shadow:0 20px 50px rgba(15,23,42,.12);
 
             display:flex;
             flex-direction:column;
@@ -129,6 +131,7 @@
             display:flex;
             justify-content:center;
             gap:16px;
+            flex-wrap:wrap;
         }
 
         .answer-btn{
@@ -137,12 +140,13 @@
             border:1px solid #e5e7eb;
             background:#f9fafb;
             color:#111827;
-            padding:12px 14px;
+            padding:14px 16px;
             text-align:center;
             font-size:14px;
             cursor:pointer;
-            min-height:52px;
-            transition:background .1s ease,border-color .1s ease,transform .05s ease;
+            min-height:56px;
+            transition:background .15s ease,border-color .15s ease;
+            --hover-shadow:0 14px 28px rgba(15,23,42,.08);
         }
 
         .answer-btn:hover{
@@ -187,21 +191,30 @@
             margin:18px auto 0;
             border-radius:999px;
             border:none;
-            padding:8px 16px;
-            font-size:13px;
+            padding:10px 20px;
+            font-size:14px;
             font-weight:600;
             background:#22c55e;
             color:#fff;
             cursor:pointer;
             display:block;
+            box-shadow:0 10px 24px rgba(34,197,94,.35);
+            --hover-shadow:0 16px 32px rgba(34,197,94,.45);
         }
 
         .restart-btn:hover{background:#16a34a;}
 
         @media (max-width:600px){
-            .card{padding:20px 16px 18px;}
+            .navbar{
+                flex-direction:column;
+                gap:8px;
+                height:auto;
+                padding:16px;
+            }
+
+            .card{padding:20px 16px 18px;border-radius:20px;}
             .question-image-box img{width:150px;height:150px;}
-            .answer-btn{flex:1 1 45%;}
+            .answer-btn{flex:1 1 100%;}
         }
     </style>
 </head>
@@ -211,9 +224,9 @@
         <img src="assets/logo.png" alt="Shiro logo">
         <div class="brand-name">Shiro – Hard</div>
     </div>
-    <div class="nav-right" id="btn-back-modes">
+    <button type="button" class="nav-right" id="btn-back-modes">
         Back to modes
-    </div>
+    </button>
 </header>
 
 <main class="main">
@@ -227,8 +240,8 @@
 
         <div class="answers-label" id="label-choose">Hãy chọn đáp án</div>
         <div class="answers-row">
-            <button class="answer-btn" id="ans-0"></button>
-            <button class="answer-btn" id="ans-1"></button>
+            <button type="button" class="answer-btn" id="ans-0"></button>
+            <button type="button" class="answer-btn" id="ans-1"></button>
         </div>
 
         <div class="feedback" id="feedback"></div>
@@ -420,8 +433,9 @@
 
         answerButtons.forEach(btn=>btn.style.display="none");
 
-        const restartBtn = document.createElement("button");
-        restartBtn.className = "restart-btn";
+    const restartBtn = document.createElement("button");
+    restartBtn.className = "restart-btn";
+    restartBtn.type = "button";
         restartBtn.textContent = t.restart;
         restartBtn.addEventListener("click", ()=>location.reload());
         cardEl.appendChild(restartBtn);

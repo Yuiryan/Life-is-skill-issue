@@ -5,6 +5,8 @@
     <title>Shiro - Human or AI Fool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <link rel="stylesheet" href="assets/ui.css">
+    <script src="assets/ui.js" defer></script>
     <style>
         * {
             box-sizing: border-box;
@@ -27,8 +29,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 32px;
-            height: 80px; /* thấp hơn, vừa với logo 48px */
+            padding: 0 clamp(16px, 5vw, 64px);
+            height: clamp(64px, 10vw, 80px);
         }
 
         .nav-left {
@@ -38,15 +40,15 @@
         }
 
         .nav-left img {
-            height: 200px;    /* trước là 300px nên nhìn như mất */
-            width: 200px;
+            height: clamp(48px, 8vw, 80px);
+            width: clamp(48px, 8vw, 80px);
             object-fit: contain;
         }
 
         .brand-name {
             font-family: 'Nunito', sans-serif;
             font-weight: 700;
-            font-size: 26px;
+            font-size: clamp(20px, 3vw, 28px);
             letter-spacing: -1px;
         }
 
@@ -68,15 +70,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 32px 24px;
+            padding: clamp(24px, 6vw, 80px) clamp(16px, 6vw, 64px) clamp(16px, 4vw, 48px);
         }
 
         .shiro {
             max-width: 1120px;
             width: 100%;
             display: grid;
-            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(24px, 5vw, 56px);
             align-items: center;
         }
 
@@ -86,7 +88,7 @@
         }
 
         .shiro-image img {
-            max-width: 700px;
+            max-width: min(700px, 90vw);
             width: 100%;
             height: auto;
             object-fit: contain;
@@ -97,7 +99,7 @@
         }
 
         .shiro-title {
-            font-size: 28px;
+            font-size: clamp(26px, 4vw, 36px);
             line-height: 1.4;
             font-weight: 600;
             color: #374151;
@@ -114,33 +116,36 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(34,197,94,0.35);
-            transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.1s ease;
+            box-shadow: 0 10px 24px rgba(34,197,94,0.35);
+            transition: background 0.15s ease;
+            --hover-shadow: 0 16px 32px rgba(34,197,94,0.45);
+            --active-shadow: 0 8px 18px rgba(34,197,94,0.35);
         }
 
         .btn-primary:hover {
             background: #16a34a;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(34,197,94,0.4);
         }
 
         /* ===== FOOTER LANGUAGE BAR ===== */
         .lang-bar {
             border-top: 1px solid #e5e7eb;
-            height: 60px;
+            min-height: 60px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 32px;
-            padding: 0 16px;
+            gap: 24px;
+            padding: 12px clamp(12px, 6vw, 48px);
             font-size: 14px;
+            flex-wrap: wrap;
         }
 
         .lang-option {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 999px;
         }
 
         .lang-option img {
@@ -179,6 +184,22 @@
                 padding: 0 16px;
             }
         }
+
+        @media (max-width: 520px) {
+            .shiro-title {
+                font-size: 22px;
+            }
+
+            .btn-primary {
+                width: 100%;
+                text-align: center;
+            }
+
+            .lang-option {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -204,7 +225,7 @@
             <h1 class="shiro-title" id="title-text">
                 Detecting AI with Shiro<br>
             </h1>
-            <button class="btn-primary" id="btn-start">
+            <button type="button" class="btn-primary" id="btn-start">
                 Get started
             </button>
         </div>
@@ -213,20 +234,20 @@
 
 <footer class="lang-bar">
     <!-- JP -->
-    <div class="lang-option" id="lang-jp">
+    <button type="button" class="lang-option" id="lang-jp">
         <img src="assets/flag-jp.webp" alt="日本語">
         <span class="lang-label">日本語</span>
-    </div>
+    </button>
     <!-- VI -->
-    <div class="lang-option" id="lang-vi">
+    <button type="button" class="lang-option" id="lang-vi">
         <img src="assets/flag-vi.webp" alt="Tiếng Việt">
         <span class="lang-label">TIẾNG VIỆT</span>
-    </div>
+    </button>
     <!-- EN -->
-    <div class="lang-option" id="lang-en">
+    <button type="button" class="lang-option" id="lang-en">
         <img src="assets/flag-en.webp" alt="English">
         <span class="lang-label">ENGLISH</span>
-    </div>
+    </button>
 </footer>
 
 
