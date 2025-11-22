@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shiro – Choose login method</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #f9fafb;
+            color: #111827;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            height: 72px;
+            background: #ffffff;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-left img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: -1px;
+        }
+
+        .nav-right {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .nav-right:hover {
+            color: #111827;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            padding: 28px 24px;
+            max-width: 460px;
+            width: 100%;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .btn-social {
+            width: 100%;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            padding: 10px 0;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .btn-social:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-google span.icon {
+            color: #ea4335;
+        }
+
+        .btn-facebook span.icon {
+            color: #1877f2;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider-text {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37,99,235,0.2);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 10px 0;
+            border-radius: 999px;
+            border: none;
+            background: #22c55e;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+            margin-top: 4px;
+        }
+
+        .btn-primary:hover {
+            background: #16a34a;
+        }
+
+        .small-text {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .small-text a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .small-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-left">
+        <img src="assets/shiro_logo_transparent.png" alt="Shiro logo">
+        <div class="brand-name">Shiro</div>
+    </div>
+    <div class="nav-right" id="back-home">
+        Back to home
+    </div>
+</header>
+
+
+<main class="main">
+   <div class="card">
+    <div class="title" id="choose-title">Choose how to continue</div>
+    <div class="subtitle" id="choose-subtitle">
+        Log in with a social account, or sign up with email below.
+    </div>
+
+    <!-- 1) Google -->
+    <button class="btn-social btn-google" id="btn-google" onclick="socialLogin('Google')">
+        <span class="icon">G</span>
+        <span id="btn-google-text">Continue with Google</span>
+    </button>
+
+    <!-- 2) Facebook -->
+    <button class="btn-social btn-facebook" id="btn-facebook" onclick="socialLogin('Facebook')">
+        <span class="icon">f</span>
+        <span id="btn-facebook-text">Continue with Facebook</span>
+    </button>
+
+    <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text" id="divider-text">or</div>
+        <div class="divider-line"></div>
+    </div>
+
+    <!-- 3) Đăng ký bằng email -->
+    <form id="signup-form">
+        <label for="name" id="label-name">Name</label>
+        <input id="name" type="text" required>
+
+        <label for="email" id="label-email">Email</label>
+        <input id="email" type="email" required>
+
+        <label for="password" id="label-password">Password</label>
+        <input id="password" type="password" required>
+
+        <button type="submit" class="btn-primary" id="btn-signup">
+            Sign up with email
+        </button>
+    </form>
+
+    <div class="small-text" id="already-have">
+        Already have an account? <a href="login.html">Log in</a>
+    </div>
+</div>
+
+</main>
+
+<script>
+    document.getElementById("back-home").addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    function socialLogin(provider) {
+        alert("Demo " + provider + " login: sau này bạn gắn SDK / OAuth thật ở đây.");
+        // window.location.href = "index.html";
+    }
+
+    document.getElementById("signup-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        alert("Demo signup: sau này bạn gửi dữ liệu lên backend để tạo tài khoản.");
+        // window.location.href = "index.html";
+    });
+
+    // ===== ĐA NGÔN NGỮ =====
+    const chooseTranslations = {
+        en: {
+            title: "Choose how to continue",
+            subtitle: "Log in with a social account, or sign up with email below.",
+            google: "Continue with Google",
+            facebook: "Continue with Facebook",
+            divider: "or",
+            name: "Name",
+            email: "Email",
+            password: "Password",
+            signup: "Sign up with email",
+            alreadyHtml: 'Already have an account? <a href="login.html">Log in</a>',
+            backHome: "Back to home"
+        },
+        vi: {
+            title: "Chọn cách tiếp tục",
+            subtitle: "Đăng nhập bằng tài khoản mạng xã hội, hoặc đăng ký bằng email bên dưới.",
+            google: "Tiếp tục với Google",
+            facebook: "Tiếp tục với Facebook",
+            divider: "hoặc",
+            name: "Tên",
+            email: "Email",
+            password: "Mật khẩu",
+            signup: "Đăng ký bằng email",
+            alreadyHtml: 'Đã có tài khoản? <a href="login.html">Đăng nhập</a>',
+            backHome: "Quay về trang chính"
+        },
+        jp: {
+            title: "続行方法を選択",
+            subtitle: "ソーシャルアカウントでログインするか、下からメールで登録してください。",
+            google: "Googleで続行",
+            facebook: "Facebookで続行",
+            divider: "または",
+            name: "名前",
+            email: "メールアドレス",
+            password: "パスワード",
+            signup: "メールで登録",
+            alreadyHtml: 'すでにアカウントをお持ちですか？ <a href="login.html">ログイン</a>',
+            backHome: "ホームに戻る"
+        }
+    };
+
+    function applyChooseLang(lang) {
+        const t = chooseTranslations[lang] || chooseTranslations.en;
+
+        document.getElementById("choose-title").textContent = t.title;
+        document.getElementById("choose-subtitle").textContent = t.subtitle;
+        document.getElementById("btn-google-text").textContent = t.google;
+        document.getElementById("btn-facebook-text").textContent = t.facebook;
+        document.getElementById("divider-text").textContent = t.divider;
+        document.getElementById("label-name").textContent = t.name;
+        document.getElementById("label-email").textContent = t.email;
+        document.getElementById("label-password").textContent = t.password;
+        document.getElementById("btn-signup").textContent = t.signup;
+        document.getElementById("already-have").innerHTML = t.alreadyHtml;
+        document.getElementById("back-home").textContent = t.backHome;
+    }
+
+    const savedLang = localStorage.getItem("shiroLang") || "en";
+    applyChooseLang(savedLang);
+</script>
+
+
+</body>
+</html>

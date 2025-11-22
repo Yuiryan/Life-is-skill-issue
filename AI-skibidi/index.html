@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Shiro - Human or AI Fool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #ffffff;
+            color: #111827;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            height: 80px; /* thấp hơn, vừa với logo 48px */
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-left img {
+            height: 200px;    /* trước là 300px nên nhìn như mất */
+            width: 200px;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 26px;
+            letter-spacing: -1px;
+        }
+
+        /* .nav-right hiện không dùng nữa nhưng giữ lại nếu sau này cần */
+        .nav-right {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .nav-right:hover {
+            color: #111827;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 32px 24px;
+        }
+
+        .shiro {
+            max-width: 1120px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+            gap: 40px;
+            align-items: center;
+        }
+
+        .shiro-image {
+            display: flex;
+            justify-content: center;
+        }
+
+        .shiro-image img {
+            max-width: 700px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .shiro-content {
+            text-align: left;
+        }
+
+        .shiro-title {
+            font-size: 28px;
+            line-height: 1.4;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 12px 36px;
+            border-radius: 99px;
+            border: none;
+            background: #22c55e;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+            transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.1s ease;
+        }
+
+        .btn-primary:hover {
+            background: #16a34a;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(34,197,94,0.4);
+        }
+
+        /* ===== FOOTER LANGUAGE BAR ===== */
+        .lang-bar {
+            border-top: 1px solid #e5e7eb;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            padding: 0 16px;
+            font-size: 14px;
+        }
+
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .lang-option img {
+            width: 24px;
+            height: 16px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        .lang-label {
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        /* Ngôn ngữ đang chọn */
+        .lang-active .lang-label {
+            color: #e11d48;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .shiro {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .shiro-content {
+                text-align: center;
+            }
+
+            .main {
+                padding: 24px 16px 16px;
+            }
+
+            .navbar, .lang-bar {
+                padding: 0 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- NAVBAR --> 
+<header class="navbar">
+    <div class="nav-left">
+        <img src="assets/logo.png" alt="Shiro logo">
+        <div class="brand-name">Shiro</div>
+    </div>
+    <!-- Đã bỏ phần LOGIN -->
+</header>
+
+<!-- MAIN shiro -->
+<main class="main">
+    <section class="shiro">
+        <!-- Hình bên trái -->
+        <div class="shiro-image">
+            <img src="assets/Shiro.webp" alt="Shiro">
+        </div>
+
+        <!-- Text + button bên phải -->
+        <div class="shiro-content">
+            <h1 class="shiro-title" id="title-text">
+                Detecting AI with Shiro<br>
+            </h1>
+            <button class="btn-primary" id="btn-start">
+                Get started
+            </button>
+        </div>
+    </section>
+</main>
+
+<footer class="lang-bar">
+    <!-- JP -->
+    <div class="lang-option" id="lang-jp">
+        <img src="assets/flag-jp.webp" alt="日本語">
+        <span class="lang-label">日本語</span>
+    </div>
+    <!-- VI -->
+    <div class="lang-option" id="lang-vi">
+        <img src="assets/flag-vi.webp" alt="Tiếng Việt">
+        <span class="lang-label">TIẾNG VIỆT</span>
+    </div>
+    <!-- EN -->
+    <div class="lang-option" id="lang-en">
+        <img src="assets/flag-en.webp" alt="English">
+        <span class="lang-label">ENGLISH</span>
+    </div>
+</footer>
+
+
+<!-- ===== SCRIPT: TƯƠNG TÁC ===== -->
+<script>
+    // 1. Dữ liệu đa ngôn ngữ
+    const translations = {
+        vi: {
+            title: "Phát hiện AI cùng Shiro",
+            startButton: "BẮT ĐẦU"
+        },
+        en: {
+            title: "Detecting AI with Shiro",
+            startButton: "Get started"
+        },
+        jp: {
+            title: "シロと一緒にAIを見抜こう",
+            startButton: "はじめよう"
+        }
+    };
+
+    const titleText   = document.getElementById("title-text");
+    const btnStart    = document.getElementById("btn-start");
+    const langJp      = document.getElementById("lang-jp");
+    const langVi      = document.getElementById("lang-vi");
+    const langEn      = document.getElementById("lang-en");
+
+    const langOptions = [langJp, langVi, langEn];
+
+    // Hàm đổi ngôn ngữ
+    function setLanguage(lang) {
+        const t = translations[lang] || translations.en;
+
+        titleText.textContent = t.title;
+        btnStart.textContent  = t.startButton;
+
+        // Lưu vào localStorage để các trang khác dùng lại
+        localStorage.setItem("shiroLang", lang);
+
+        // đổi class active ở thanh ngôn ngữ
+        langOptions.forEach(opt => opt.classList.remove("lang-active"));
+        if (lang === "vi")   langVi.classList.add("lang-active");
+        if (lang === "en")   langEn.classList.add("lang-active");
+        if (lang === "jp")   langJp.classList.add("lang-active");
+    }
+
+    // Gắn sự kiện click cho 3 ngôn ngữ
+    langVi.addEventListener("click", () => setLanguage("vi"));
+    langEn.addEventListener("click", () => setLanguage("en"));
+    langJp.addEventListener("click", () => setLanguage("jp"));
+
+    // Nút Get started: đi thẳng vào quiz_home
+    btnStart.addEventListener("click", () => {
+        window.location.href = "quiz_home.html";
+    });
+
+    // Ngôn ngữ mặc định: đọc từ localStorage, nếu chưa có thì EN
+    const savedLang = localStorage.getItem("shiroLang") || "en";
+    setLanguage(savedLang);
+</script>
+
+</body>
+</html>

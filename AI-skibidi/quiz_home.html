@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shiro – Quiz Modes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #f9fafb;
+            color: #111827;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            height: 72px;
+            background: #ffffff;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-left img {
+            height: 200px;
+            width: 200px;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: -1px;
+        }
+
+        .nav-right {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .nav-right:hover {
+            color: #111827;
+        }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .mode-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .mode-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .mode-desc {
+            font-size: 13px;
+            color: #4b5563;
+            margin-bottom: 16px;
+            min-height: 60px;
+        }
+
+        .mode-meta {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 12px;
+        }
+
+        .btn-start {
+            border: none;
+            border-radius: 999px;
+            padding: 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            background: #22c55e;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+            transition: background 0.1s ease, transform 0.05s ease, box-shadow 0.05s ease;
+        }
+
+        .btn-start:hover {
+            background: #16a34a;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(34,197,94,0.4);
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .badge-easy {
+            background: #ecfdf3;
+            color: #166534;
+        }
+
+        .badge-medium {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .badge-hard {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        @media (max-width: 800px) {
+            .mode-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-left">
+        <img src="assets/logo.png" alt="Shiro logo">
+        <div class="brand-name">Shiro</div>
+    </div>
+    <div class="nav-right" id="btn-logout">
+        Return
+    </div>
+</header>
+
+<main class="main">
+    <div class="container">
+        <div class="page-title" id="page-title">
+            Choose your quiz mode
+        </div>
+        <div class="page-subtitle" id="page-subtitle">
+            Start with an easy warm-up, then challenge yourself with harder levels.
+        </div>
+
+        <div class="mode-grid">
+            <!-- EASY -->
+            <div class="mode-card">
+                <div>
+                    <div class="badge badge-easy" id="badge-easy">Easy</div>
+                    <div class="mode-name" id="mode-easy-title">Easy mode</div>
+                    <div class="mode-desc" id="mode-easy-desc">
+                        Fewer questions, obvious AI clues, nhiều ví dụ rõ ràng để bạn làm quen với cách nhận diện.
+                    </div>
+                    <div class="mode-meta" id="mode-easy-meta">
+                        ~10 questions • recommended for first-time users
+                    </div>
+                </div>
+                <button class="btn-start" id="btn-easy">
+                    Start Easy mode
+                </button>
+            </div>
+
+            <!-- MEDIUM -->
+            <div class="mode-card">
+                <div>
+                    <div class="badge badge-medium" id="badge-medium">Medium / Vừa</div>
+                    <div class="mode-name" id="mode-medium-title">Medium mode</div>
+
+                    <div class="mode-desc" id="mode-medium-desc">
+                        Câu hỏi đa dạng hơn, dấu hiệu AI tinh tế hơn. Phù hợp khi bạn đã quen với mức dễ.
+                    </div>
+                    <div class="mode-meta" id="mode-medium-meta">
+                        ~15 questions • mixed difficulty
+                    </div>
+                </div>
+                <button class="btn-start" id="btn-medium">
+                    Start Medium mode
+                </button>
+            </div>
+
+            <!-- HARD -->
+            <div class="mode-card">
+                <div>
+                    <div class="badge badge-hard" id="badge-hard">Hard / Khó</div>
+                    <div class="mode-name" id="mode-hard-title">Hard mode</div>
+                    <div class="mode-desc" id="mode-hard-desc">
+                        Ảnh thật và ảnh AI rất khó phân biệt, cần quan sát cực kỹ. Thử thách dành cho “cao thủ”.
+                    </div>
+                    <div class="mode-meta" id="mode-hard-meta">
+                        ~20 questions • advanced difficulty
+                    </div>
+                </div>
+                <button class="btn-start" id="btn-hard">
+                    Start Hard mode
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Logout -> quay về trang chính
+    document.getElementById("btn-logout").addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    // Điều hướng 3 mode sang 3 trang quiz
+    document.getElementById("btn-easy").addEventListener("click", () => {
+        window.location.href = "quiz_easy.html";
+    });
+
+    document.getElementById("btn-medium").addEventListener("click", () => {
+        window.location.href = "quiz_medium.html";
+    });
+
+    document.getElementById("btn-hard").addEventListener("click", () => {
+        window.location.href = "quiz_hard.html";
+    });
+
+    // ===== ĐA NGÔN NGỮ =====
+    const quizTranslations = {
+        en: {
+            logout: "Log ou",
+            pageTitle: "Choose your life path",
+            pageSubtitle: "Those chickens will nevere understand",
+
+            badgeEasy: "Easy",
+            badgeMedium: "Medium",
+            badgeHard: "Hard",
+            easyTitle: "Easy mode",
+            easyDesc: "Caughing baby vs Hydrogen Bomb (you)",
+            easyMeta: "10 questions",
+            easyButton: "Start",
+
+            mediumTitle: "Medium mode",
+            mediumDesc: "China vs Japan",
+            mediumMeta: "Still 10 questions",
+            mediumButton: "Start",
+
+            hardTitle: "Hard mode",
+            hardDesc: "Gojo vs Sukuna",
+            hardMeta: "Ofc 10 questions",
+            hardButton: "Start"
+        },
+        vi: {
+            logout: "Đăng xuất",
+            pageTitle: "Chọn chế độ quiz",
+            pageSubtitle: "Đế vương phải có long ngai, mấy con gà thì biết gì",
+
+            badgeEasy: "Dễ",
+            badgeMedium: "Vừa",
+            badgeHard: "???",
+
+            easyTitle: "Dễ",
+            easyDesc: "Vừa làm vừa trông cậu vàng còn được",
+            easyMeta: "10 câu",
+            easyButton: "Bắt đầu",
+
+            mediumTitle: "Vừa",
+            mediumDesc: "Khuyến nghị ngồi xe lăn để làm. Chưa chắc manten nhưng chắc chắn sẽ bị gọi là Tê liệt",
+            mediumMeta: "Vẫn là 10 câu",
+            mediumButton: "Bắt đầu",
+
+            hardTitle: "?",
+            hardDesc: "?",
+            hardMeta: "?",
+            hardButton: "Bắt đầu"
+        },
+        jp: {
+            logout: "ログアウト",
+            pageTitle: "クイズモードを選択",
+            pageSubtitle: "私の人生について何をしていますか",
+
+            badgeEasy: "やさしい",
+            badgeMedium: "ふつう",
+            badgeHard: "むずかしい",
+
+            easyTitle: "やさしい",
+            easyDesc: "15分漢字テスト似ている",
+            easyMeta: "10 問含まれて",
+            easyButton: "始める",
+
+            mediumTitle: "ふつう",
+            mediumDesc: "ういあういあういあういあ",
+            mediumMeta: "10 問含まれて",
+            mediumButton: "始める",
+
+            hardTitle: "むずかしい",
+            hardDesc: "むずかしいですが、おもしろいです",
+            hardMeta: "10 問含まれて",
+            hardButton: "始める"
+        }
+    };
+
+    function applyQuizLang(lang) {
+        const t = quizTranslations[lang] || quizTranslations.en;
+
+        document.getElementById("btn-logout").textContent  = t.logout;
+        document.getElementById("page-title").textContent  = t.pageTitle;
+        document.getElementById("page-subtitle").textContent = t.pageSubtitle;
+
+        document.getElementById("badge-easy").textContent   = t.badgeEasy;
+        document.getElementById("badge-medium").textContent = t.badgeMedium;
+        document.getElementById("badge-hard").textContent   = t.badgeHard;
+
+        document.getElementById("mode-easy-title").textContent = t.easyTitle;
+        document.getElementById("mode-easy-desc").textContent  = t.easyDesc;
+        document.getElementById("mode-easy-meta").textContent  = t.easyMeta;
+        document.getElementById("btn-easy").textContent        = t.easyButton;
+
+        document.getElementById("mode-medium-title").textContent = t.mediumTitle;
+        document.getElementById("mode-medium-desc").textContent  = t.mediumDesc;
+        document.getElementById("mode-medium-meta").textContent  = t.mediumMeta;
+        document.getElementById("btn-medium").textContent        = t.mediumButton;
+
+        document.getElementById("mode-hard-title").textContent = t.hardTitle;
+        document.getElementById("mode-hard-desc").textContent  = t.hardDesc;
+        document.getElementById("mode-hard-meta").textContent  = t.hardMeta;
+        document.getElementById("btn-hard").textContent        = t.hardButton;
+    }
+
+    // đọc ngôn ngữ đã chọn từ index/login
+    const savedLang = localStorage.getItem("shiroLang") || "en";
+    applyQuizLang(savedLang);
+</script>
+</body>
+</html>

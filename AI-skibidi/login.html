@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shiro – Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #f9fafb;
+            color: #111827;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            height: 72px;
+            background: #ffffff;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-left img {
+            height: 200px;
+            width: 200px;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: -1px;
+        }
+
+        .nav-right {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .nav-right:hover {
+            color: #111827;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            padding: 28px 24px;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .login-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37,99,235,0.2);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 10px 0;
+            border-radius: 999px;
+            border: none;
+            background: #22c55e;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+            margin-top: 4px;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary:hover {
+            background: #16a34a;
+        }
+
+        .small-text {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .small-text a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .small-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-left">
+        <img src="assets/logo.png" alt="Shiro logo">
+        <div class="brand-name">Shiro</div>
+    </div>
+    <!-- Dùng id để JS bắt sự kiện & đổi ngôn ngữ -->
+    <div class="nav-right" id="back-home">
+        Back to home
+    </div>
+</header>
+
+<main class="main">
+    <div class="login-card">
+        <div class="login-title" id="login-title">Log in to Shiro</div>
+        <div class="login-subtitle" id="login-subtitle">
+            Enter your email and password to continue.
+        </div>
+
+        <form id="login-form">
+            <label for="email" id="label-email">Email</label>
+            <input id="email" type="email" required>
+
+            <label for="password" id="label-password">Password</label>
+            <input id="password" type="password" required>
+
+            <button type="submit" class="btn-primary" id="btn-login">Log in</button>
+        </form>
+
+        <div class="small-text" id="choose-other">
+            Or <a href="login_choose.html">choose another login method</a>.
+        </div>
+    </div>
+</main>
+
+<script>
+    // xử lý click nút back
+    document.getElementById("back-home").addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    // Demo: xử lý login tạm thời
+    document.getElementById("login-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        alert("Demo login: ở đây sau này bạn xử lý backend / API thật.");
+        // Sau khi login xong bạn muốn sang quiz_home:
+        window.location.href = "quiz_home.html";
+    });
+
+    // ===== ĐA NGÔN NGỮ =====
+    const loginTranslations = {
+        en: {
+            title: "Log in to Shiro",
+            subtitle: "Enter your email and password to continue.",
+            email: "Email",
+            password: "Password",
+            button: "Log in",
+            backHome: "Back to home",
+            chooseOtherHtml: 'Or <a href="login_choose.html">choose another login method</a>.'
+        },
+        vi: {
+            title: "Đăng nhập vào Shiro",
+            subtitle: "Nhập email và mật khẩu để tiếp tục.",
+            email: "Email",
+            password: "Mật khẩu",
+            button: "Đăng nhập",
+            backHome: "Quay về trang chính",
+            chooseOtherHtml: 'Hoặc <a href="login_choose.html">chọn cách đăng nhập khác</a>.'
+        },
+        jp: {
+            title: "Shiroにログイン",
+            subtitle: "続行するにはメールアドレスとパスワードを入力してください。",
+            email: "メールアドレス",
+            password: "パスワード",
+            button: "ログイン",
+            backHome: "ホームに戻る",
+            chooseOtherHtml: 'または <a href="login_choose.html">別のログイン方法を選ぶ</a>。'
+        }
+    };
+
+    function applyLoginLang(lang) {
+        const t = loginTranslations[lang] || loginTranslations.en;
+        document.getElementById("login-title").textContent = t.title;
+        document.getElementById("login-subtitle").textContent = t.subtitle;
+        document.getElementById("label-email").textContent = t.email;
+        document.getElementById("label-password").textContent = t.password;
+        document.getElementById("btn-login").textContent = t.button;
+        document.getElementById("back-home").textContent = t.backHome;
+        document.getElementById("choose-other").innerHTML = t.chooseOtherHtml;
+    }
+
+    // đọc lang đã chọn ở index
+    const savedLang = localStorage.getItem("shiroLang") || "en";
+    applyLoginLang(savedLang);
+</script>
+
+</body>
+</html>

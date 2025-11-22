@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shiro – Medium Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
+    <style>
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+            font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        }
+
+        body{
+            background:#f3f4f6;
+            color:#111827;
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            animation:pageFadeIn .4s ease-out;
+        }
+
+        @keyframes pageFadeIn{
+            from{opacity:0;transform:translateY(8px);}
+            to{opacity:1;transform:translateY(0);}
+        }
+
+        .navbar{
+            height:64px;
+            border-bottom:1px solid #e5e7eb;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 24px;
+            background:#fff;
+        }
+
+        .nav-left{
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .nav-left img{
+            height:36px;
+            width:36px;
+            object-fit:contain;
+        }
+
+        .brand-name{
+            font-family:'Nunito',sans-serif;
+            font-weight:700;
+            font-size:20px;
+        }
+
+        .nav-right{
+            font-size:13px;
+            color:#6b7280;
+            cursor:pointer;
+        }
+
+        .nav-right:hover{color:#111827;}
+
+        .main{
+            flex:1;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:24px;
+        }
+
+        .card{
+            background:#fff;
+            color:#111827;
+            border-radius:20px;
+            padding:24px 24px 20px;
+            max-width:720px;
+            width:100%;
+            box-shadow:0 16px 40px rgba(15,23,42,.12);
+
+            display:flex;
+            flex-direction:column;
+            align-items:stretch;
+
+            animation:cardIn .35s ease-out;
+        }
+
+        @keyframes cardIn{
+            from{opacity:0;transform:scale(.97);}
+            to{opacity:1;transform:scale(1);}
+        }
+
+        .question-top-label{
+            font-size:12px;
+            color:#6b7280;
+            margin-bottom:6px;
+        }
+
+        .definition{
+            font-size:22px;
+            font-weight:600;
+            margin-bottom:24px;
+        }
+
+        .question-image-box{
+            display:flex;
+            justify-content:center;
+            margin-bottom:18px;
+        }
+
+        .question-image-box img{
+            width:180px;
+            height:180px;
+            object-fit:cover;
+            border-radius:16px;
+            background:#f9fafb;
+        }
+
+        .answers-label{
+            font-size:13px;
+            margin-bottom:8px;
+            color:#4b5563;
+            text-align:center;
+        }
+
+        .answers-row{
+            display:flex;
+            justify-content:center;
+            gap:16px;
+        }
+
+        .answer-btn{
+            flex:0 0 40%;
+            border-radius:14px;
+            border:1px solid #e5e7eb;
+            background:#f9fafb;
+            color:#111827;
+            padding:12px 14px;
+            text-align:center;
+            font-size:14px;
+            cursor:pointer;
+            min-height:52px;
+            transition:background .1s ease,border-color .1s ease,transform .05s ease;
+        }
+
+        .answer-btn:hover{
+            background:#e5f2ff;
+            border-color:#93c5fd;
+            transform:translateY(-1px);
+        }
+
+        .answer-btn.correct{
+            background:#dcfce7;
+            border-color:#22c55e;
+        }
+
+        .answer-btn.wrong{
+            background:#fee2e2;
+            border-color:#f97373;
+        }
+
+        .answer-btn:disabled{
+            cursor:default;
+            opacity:.95;
+        }
+
+        .feedback{
+            margin-top:14px;
+            font-size:14px;
+            min-height:20px;
+            text-align:center;
+        }
+
+        .feedback.correct{color:#16a34a;}
+        .feedback.wrong{color:#dc2626;}
+
+        .progress{
+            margin-top:4px;
+            font-size:12px;
+            color:#6b7280;
+            text-align:center;
+        }
+
+        .restart-btn{
+            margin:18px auto 0;
+            border-radius:999px;
+            border:none;
+            padding:8px 16px;
+            font-size:13px;
+            font-weight:600;
+            background:#22c55e;
+            color:#fff;
+            cursor:pointer;
+            display:block;
+        }
+
+        .restart-btn:hover{background:#16a34a;}
+
+        @media (max-width:600px){
+            .card{padding:20px 16px 18px;}
+            .question-image-box img{width:150px;height:150px;}
+            .answer-btn{flex:1 1 45%;}
+        }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-left">
+        <img src="assets/logo.png" alt="Shiro logo">
+        <div class="brand-name">Shiro – Medium</div>
+    </div>
+    <div class="nav-right" id="btn-back-modes">
+        Back to modes
+    </div>
+</header>
+
+<main class="main">
+    <div class="card" id="card">
+        <div class="question-top-label" id="label-definition">Câu hỏi</div>
+        <div class="definition" id="definition-text"></div>
+
+        <div class="question-image-box">
+            <img id="question-image" src="assets/m1.png" alt="illustration">
+        </div>
+
+        <div class="answers-label" id="label-choose">Hãy chọn đáp án</div>
+        <div class="answers-row">
+            <button class="answer-btn" id="ans-0"></button>
+            <button class="answer-btn" id="ans-1"></button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        <div class="progress" id="progress-text"></div>
+    </div>
+</main>
+
+<script>
+    // ===== 10 CÂU HỎI MEDIUM – mỗi câu có vi/en/jp =====
+    // Gợi ý: tạo ảnh assets/m1.png ... m10.png
+    const questions = [
+        {
+            vi: "Juan ko anh ?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m1.png",
+            correct: 0
+        },
+        {
+            vi: "Riu hay fếch ?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m2.png",
+            correct: 1
+        },
+        {
+            vi: "Ảnh này trông có giống AI tạo ra không?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m3.png",
+            correct: 0
+        },
+        {
+            vi: "Đây có vẻ là ảnh chụp thật, đúng không?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m4.png",
+            correct: 1
+        },
+        {
+            vi: "Mắt và tay trong ảnh có bị méo mó bất thường không?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m5.png",
+            correct: 0
+        },
+        {
+            vi: "Đây có phải là ảnh chụp trong đời thực?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m6.png",
+            correct: 1
+        },
+        {
+            vi: "Ảnh này có texture da rất mịn, trông như AI?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m7.png",
+            correct: 0
+        },
+        {
+            vi: "Đây có phải là cảnh vật ngoài đời, không phải AI vẽ?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m8.png",
+            correct: 1
+        },
+        {
+            vi: "Bạn nghĩ đây là ảnh deepfake?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m9.png",
+            correct: 0
+        },
+        {
+            vi: "Nhìn kỹ, bạn nghĩ đây là ảnh thật chứ không phải deepfake?",
+            en: "Cake or Rill?",
+            jp: "AI or あい？",
+            img: "assets/m10.png",
+            correct: 1
+        }
+    ];
+
+    const uiTexts = {
+        en: {
+            defLabel: "Question",
+            chooseLabel: "Please choose an answer",
+            back: "Back to modes",
+            correct: "Correct!",
+            wrong: "Incorrect.",
+            yes: "Yes",
+            no: "No",
+            progress: (cur, total) => `Question ${cur} of ${total}`,
+            finished: (s, t) => `Finished! You got ${s} / ${t} correct.`,
+            restart: "Restart"
+        },
+        vi: {
+            defLabel: "Câu hỏi",
+            chooseLabel: "Hãy chọn đáp án",
+            back: "Về chọn chế độ",
+            correct: "Đúng rồi!",
+            wrong: "Sai mất rồi...",
+            yes: "Có",
+            no: "Không",
+            progress: (cur, total) => `Câu ${cur} / ${total}`,
+            finished: (s, t) => `Hoàn thành! Bạn đúng ${s} / ${t} câu.`,
+            restart: "Làm lại"
+        },
+        jp: {
+            defLabel: "質問",
+            chooseLabel: "答えを選んでください",
+            back: "モード選択へ戻る",
+            correct: "正解！",
+            wrong: "不正解…",
+            yes: "はい",
+            no: "いいえ",
+            progress: (cur, total) => `${total}問中 ${cur}問目`,
+            finished: (s, tot) => `お疲れさま！ ${tot}問中${s}問正解しました。`,
+            restart: "もう一度"
+        }
+    };
+
+    const btnBack         = document.getElementById("btn-back-modes");
+    const labelDefinition = document.getElementById("label-definition");
+    const labelChoose     = document.getElementById("label-choose");
+    const definitionText  = document.getElementById("definition-text");
+    const feedbackEl      = document.getElementById("feedback");
+    const progressText    = document.getElementById("progress-text");
+    const imageEl         = document.getElementById("question-image");
+    const cardEl          = document.getElementById("card");
+
+    const answerButtons = [
+        document.getElementById("ans-0"),
+        document.getElementById("ans-1")
+    ];
+
+    let current = 0;
+    let score   = 0;
+    let locked  = false;
+    let currentLang = "en";
+    let t       = uiTexts.en;
+
+    function applyLang(lang){
+        currentLang = lang;
+        t = uiTexts[lang] || uiTexts.en;
+
+        labelDefinition.textContent = t.defLabel;
+        labelChoose.textContent     = t.chooseLabel;
+        btnBack.textContent         = t.back;
+
+        renderQuestion();
+    }
+
+    function renderQuestion(){
+        const q = questions[current];
+
+        cardEl.style.animation = "none";
+        void cardEl.offsetWidth;
+        cardEl.style.animation = "cardIn .35s ease-out";
+
+        const qText = q[currentLang] || q.vi;
+        definitionText.textContent = qText;
+
+        imageEl.src = q.img;
+        imageEl.style.visibility = "visible";
+
+        feedbackEl.textContent = "";
+        feedbackEl.className   = "feedback";
+
+        answerButtons[0].textContent = t.yes;
+        answerButtons[1].textContent = t.no;
+
+        answerButtons.forEach(btn=>{
+            btn.classList.remove("correct","wrong");
+            btn.disabled = false;
+        });
+
+        progressText.textContent = t.progress(current+1, questions.length);
+        locked = false;
+    }
+
+    function showResult(){
+        definitionText.textContent = "";
+        imageEl.style.visibility   = "hidden";
+        labelChoose.textContent    = "";
+        feedbackEl.textContent     = t.finished(score, questions.length);
+        feedbackEl.className       = "feedback correct";
+        progressText.textContent   = "";
+
+        answerButtons.forEach(btn=>btn.style.display="none");
+
+        const restartBtn = document.createElement("button");
+        restartBtn.className = "restart-btn";
+        restartBtn.textContent = t.restart;
+        restartBtn.addEventListener("click", ()=>location.reload());
+        cardEl.appendChild(restartBtn);
+    }
+
+    function handleAnswer(index){
+        if(locked) return;
+        locked = true;
+
+        const q = questions[current];
+        answerButtons.forEach(btn=>btn.disabled=true);
+
+        if(index === q.correct){
+            feedbackEl.textContent = t.correct;
+            feedbackEl.className   = "feedback correct";
+            answerButtons[index].classList.add("correct");
+            score++;
+        }else{
+            feedbackEl.textContent = t.wrong;
+            feedbackEl.className   = "feedback wrong";
+            answerButtons[index].classList.add("wrong");
+            answerButtons[q.correct].classList.add("correct");
+        }
+
+        setTimeout(()=>{
+            current++;
+            if(current < questions.length) renderQuestion();
+            else showResult();
+        },900);
+    }
+
+    answerButtons.forEach((btn,idx)=>{
+        btn.addEventListener("click", ()=>handleAnswer(idx));
+    });
+
+    btnBack.addEventListener("click", ()=>{
+        window.location.href = "quiz_home.html";
+    });
+
+    const savedLang = localStorage.getItem("shiroLang") || "en";
+    applyLang(savedLang);
+</script>
+</body>
+</html>
