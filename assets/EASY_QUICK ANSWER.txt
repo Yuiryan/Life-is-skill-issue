@@ -1,0 +1,10 @@
+1 - AI
+2 - AI
+3 - AI
+4 - REAL
+5 - REAL
+6 - REAL
+7 - AI
+8 - AI
+9 - REAL
+10 - REAL
