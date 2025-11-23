@@ -112,13 +112,14 @@
             margin-bottom:18px;
         }
 
-        .question-image-box img{
-            width:180px;
-            height:180px;
-            object-fit:cover;
-            border-radius:16px;
-            background:#f9fafb;
-        }
+        .question-image-box img {
+    width: min(320px, 80vw); /* co theo chiều rộng màn hình, max ~320px */
+    aspect-ratio: 1 / 1;     /* giữ tỉ lệ vuông */
+    object-fit: contain;     /* không cắt mất nội dung ảnh */
+    border-radius: 16px;
+    background: #f9fafb;
+}
+
 
         .answers-label{
             font-size:13px;
