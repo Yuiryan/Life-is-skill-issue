@@ -335,11 +335,10 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
         <div class="modal-header">
             <div class="modal-title" id="welcome-title">Welcome to Shiro</div>
-            <button type="button" id="modal-close-x" aria-label="Close">✕</button>
         </div>
         <div class="modal-body" id="welcome-body">
-            <p>Thanks for visiting! Currently this site only serves to test basic functions for the purpose of implementing quizzes that checks users' ability in detecting authenticity of a photo - that is, whether an image was generated with the usage of Generative AI or not.</p>
-            <p>This is an amateur project by a small team of students from class <em>CN01</em>, for course <em>CO2001: Professional Skills for Engineers</em> of <em>Ho Chi Minh City University of Technology (HCMUT)</em></p>
+            <p id="welcome-body-para1">Thanks for visiting! Currently this site only serves to test basic functions for the purpose of implementing quizzes that checks users' ability in detecting authenticity of a photo - that is, whether an image was generated with the usage of Generative AI or not.</p>
+            <p id="welcome-body-para2">This is an amateur project by a small team of students from class <em>CN01</em>, for course <em>CO2001: Professional Skills for Engineers</em> of <em>Ho Chi Minh City University of Technology (HCMUT)</em></p>
         </div>
         <div class="modal-actions">
             <button type="button" class="btn-primary" id="modal-ok">Got it</button>
@@ -373,6 +372,11 @@
             pageTitle: "Choose your life path",
             pageSubtitle: "Those chickens will never understand",
 
+            welcomeTitle: "Welcome to Shiro",
+            welcomeParagraph1: "Thanks for visiting! Currently this site only serves to test basic functions for the purpose of implementing quizzes that check your ability to detect whether a photo was created with Generative AI or not.",
+            welcomeParagraph2: "This is an amateur project by a small team of students from class <em>CN01</em>, for course <em>CO2001: Professional Skills for Engineers</em> of <em>Ho Chi Minh City University of Technology (HCMUT)</em>.",
+            welcomeCTA: "Got it",
+
             badgeEasy: "Easy",
             badgeMedium: "Medium",
             badgeHard: "Hard",
@@ -395,6 +399,11 @@
             logout: "Quay lại",
             pageTitle: "Chọn chế độ quiz",
             pageSubtitle: "Đế vương phải có long ngai, mấy con gà thì biết gì",
+
+            welcomeTitle: "Chào mừng đến với Shiro",
+            welcomeParagraph1: "Cảm ơn bạn đã ghé thăm! Trang này hiện chỉ dùng để thử nghiệm các chức năng cơ bản của bộ câu hỏi giúp người chơi luyện khả năng nhận biết ảnh thật so với ảnh được tạo bởi Generative AI.",
+            welcomeParagraph2: "Đây là dự án tự làm của một nhóm sinh viên lớp <em>CN01</em>, thuộc học phần <em>CO2001: Professional Skills for Engineers</em> của <em>trường Đại học Bách khoa - ĐHQG-HCM (HCMUT)</em>.",
+            welcomeCTA: "Đã rõ",
 
             badgeEasy: "Dễ",
             badgeMedium: "Vừa",
@@ -419,6 +428,11 @@
             logout: "返す",
             pageTitle: "クイズモードを選択",
             pageSubtitle: "私の人生について何をしていますか",
+
+            welcomeTitle: "Shiro へようこそ",
+            welcomeParagraph1: "ご訪問いただきありがとうございます。このサイトは、ある写真が生成AIで作られたものかどうかを見分けるクイズ機能を試すためのデモ版です。",
+            welcomeParagraph2: "このプロジェクトは、<em>ホーチミン市工科大学 (HCMUT)</em> の <em>CO2001: Professional Skills for Engineers</em> 講義に所属する <em>CN01</em> クラスの学生チームによる自主制作です。",
+            welcomeCTA: "了解",
 
             badgeEasy: "やさしい",
             badgeMedium: "ふつう",
@@ -448,6 +462,15 @@
         document.getElementById("page-title").textContent  = t.pageTitle;
         document.getElementById("page-subtitle").textContent = t.pageSubtitle;
 
+        const welcomeTitle = document.getElementById("welcome-title");
+        const welcomePara1 = document.getElementById("welcome-body-para1");
+        const welcomePara2 = document.getElementById("welcome-body-para2");
+        const welcomeCTA = document.getElementById("modal-ok");
+        if (welcomeTitle) welcomeTitle.textContent = t.welcomeTitle;
+        if (welcomePara1) welcomePara1.innerHTML = t.welcomeParagraph1;
+        if (welcomePara2) welcomePara2.innerHTML = t.welcomeParagraph2;
+        if (welcomeCTA) welcomeCTA.textContent = t.welcomeCTA;
+
         document.getElementById("badge-easy").textContent   = t.badgeEasy;
         document.getElementById("badge-medium").textContent = t.badgeMedium;
         document.getElementById("badge-hard").textContent   = t.badgeHard;
@@ -472,12 +495,22 @@
     const savedLang = localStorage.getItem("shiroLang") || "en";
     applyQuizLang(savedLang);
 
-    // --- Welcome modal: show once per user using localStorage ---
+    // --- Welcome modal: show once until the page is refreshed ---
     (function () {
-        const MODAL_KEY = 'shiro_welcome_shown_v1';
+        const SESSION_KEY = 'shiro_qhome_welcome_seen';
         const modalOverlay = document.getElementById('welcome-modal');
         const btnOk = document.getElementById('modal-ok');
-        const btnCloseX = document.getElementById('modal-close-x');
+
+        // If user explicitly reloads the page, allow the popup to reappear
+        try {
+            const navEntry = performance.getEntriesByType?.('navigation')?.[0];
+            const navType = navEntry?.type || (performance.navigation?.type === 1 ? 'reload' : 'navigate');
+            if (navType === 'reload') {
+                sessionStorage.removeItem(SESSION_KEY);
+            }
+        } catch (err) {
+            // Silently ignore performance/sessionStorage issues
+        }
 
         function openModal() {
             if (!modalOverlay) return;
@@ -485,16 +518,22 @@
             modalOverlay.setAttribute('aria-hidden', 'false');
         }
 
-        function closeModal(doNotShowAgain) {
+        function closeModal() {
             if (!modalOverlay) return;
             modalOverlay.classList.remove('open');
             modalOverlay.setAttribute('aria-hidden', 'true');
             try {
-                if (doNotShowAgain) {
-                    localStorage.setItem(MODAL_KEY, '1');
-                }
-            } catch (e) {
-                // ignore localStorage errors
+                sessionStorage.setItem(SESSION_KEY, '1');
+            } catch (err) {
+                // ignore storage errors
+            }
+        }
+
+        function shouldShowModal() {
+            try {
+                return !sessionStorage.getItem(SESSION_KEY);
+            } catch (err) {
+                return true;
             }
         }
 
@@ -502,24 +541,16 @@
         if (modalOverlay) {
             modalOverlay.addEventListener('click', (e) => {
                 if (e.target === modalOverlay) {
-                    closeModal(false);
+                    closeModal();
                 }
             });
         }
 
-        if (btnOk) btnOk.addEventListener('click', () => closeModal(true));
-        if (btnCloseX) btnCloseX.addEventListener('click', () => closeModal(false));
+        if (btnOk) btnOk.addEventListener('click', closeModal);
 
-        // Show modal automatically if not shown before
-        try {
-            const shown = localStorage.getItem(MODAL_KEY);
-            if (!shown) {
-                // small timeout to allow page paint
-                window.requestAnimationFrame(() => setTimeout(openModal, 200));
-            }
-        } catch (e) {
-            // If localStorage isn't available, still show once per session
-            openModal();
+        // Show modal once per session (until the user refreshes the page)
+        if (shouldShowModal()) {
+            window.requestAnimationFrame(() => setTimeout(openModal, 200));
         }
     })();
 </script>

@@ -92,6 +92,13 @@
             width: 100%;
             height: auto;
             object-fit: contain;
+            animation: shiroFloat 4.5s ease-in-out infinite;
+        }
+
+        @keyframes shiroFloat {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-14px); }
+            100% { transform: translateY(0px); }
         }
 
         .shiro-content {
@@ -406,8 +413,6 @@
     const introEnterBtn = document.getElementById("intro-enter");
     const introSkipBtn  = document.getElementById("intro-skip");
 
-    const INTRO_STORAGE_KEY = "shiro_intro_seen_v1";
-
     function openIntroOverlay() {
         if (!introOverlay) return;
         introOverlay.classList.add("is-open");
@@ -415,31 +420,15 @@
         document.body.classList.add("intro-open");
     }
 
-    function closeIntroOverlay(persistSeen) {
+    function closeIntroOverlay() {
         if (!introOverlay) return;
         introOverlay.classList.remove("is-open");
         introOverlay.setAttribute("aria-hidden", "true");
         document.body.classList.remove("intro-open");
-
-        if (persistSeen) {
-            try {
-                localStorage.setItem(INTRO_STORAGE_KEY, "1");
-            } catch (err) {
-                /* ignore storage errors */
-            }
-        }
     }
 
-    function shouldShowIntroOverlay() {
-        try {
-            return !localStorage.getItem(INTRO_STORAGE_KEY);
-        } catch (err) {
-            return true;
-        }
-    }
-
-    introEnterBtn?.addEventListener("click", () => closeIntroOverlay(true));
-    introSkipBtn?.addEventListener("click", () => closeIntroOverlay(false));
+    introEnterBtn?.addEventListener("click", () => closeIntroOverlay());
+    introSkipBtn?.addEventListener("click", () => closeIntroOverlay());
     introOverlay?.addEventListener("click", (event) => {
         if (event.target === introOverlay) {
             closeIntroOverlay(false);
@@ -482,9 +471,7 @@
     const savedLang = localStorage.getItem("shiroLang") || "en";
     setLanguage(savedLang);
 
-    if (shouldShowIntroOverlay()) {
-        requestAnimationFrame(() => setTimeout(openIntroOverlay, 200));
-    }
+    requestAnimationFrame(() => setTimeout(openIntroOverlay, 200));
 </script>
 
 </body>
