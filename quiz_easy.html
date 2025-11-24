@@ -436,12 +436,30 @@
 
         answerButtons.forEach(btn => btn.style.display = "none");
 
-    const restartBtn = document.createElement("button");
-    restartBtn.className = "restart-btn";
-    restartBtn.type = "button";
+        // create action buttons: Restart + Back to modes (clears saved state)
+        const actionsWrap = document.createElement("div");
+        actionsWrap.style.display = "flex";
+        actionsWrap.style.gap = "10px";
+        actionsWrap.style.marginTop = "12px";
+
+        const restartBtn = document.createElement("button");
+        restartBtn.className = "restart-btn";
+        restartBtn.type = "button";
         restartBtn.textContent = t.restart;
         restartBtn.addEventListener("click", () => location.reload());
-        cardEl.appendChild(restartBtn);
+
+        const backToModesBtn = document.createElement("button");
+        backToModesBtn.className = "restart-btn";
+        backToModesBtn.type = "button";
+        backToModesBtn.textContent = t.back || "Back to modes";
+        backToModesBtn.addEventListener("click", () => {
+            clearState();
+            window.location.href = "quiz_home.html";
+        });
+
+        actionsWrap.appendChild(restartBtn);
+        actionsWrap.appendChild(backToModesBtn);
+        cardEl.appendChild(actionsWrap);
     }
 
     function handleAnswer(index) {
@@ -477,12 +495,63 @@
         btn.addEventListener("click", () => handleAnswer(idx));
     });
 
+    // --- resume/save state support ---
+    const STORAGE_KEY = "shiroQuiz_easy";
+
+    function saveState() {
+        try {
+            const payload = {
+                current,
+                score,
+                currentLang
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (e) { /* ignore storage errors */ }
+    }
+
+    function loadState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+    }
+
+    function clearState() {
+        localStorage.removeItem(STORAGE_KEY);
+    }
+
+    // save when user intentionally navigates back to modes
     btnBack.addEventListener("click", () => {
+        saveState();
         window.location.href = "quiz_home.html";
     });
 
+    // also save on page unload (accidental close / reload)
+    window.addEventListener("beforeunload", saveState);
+
+    // when quiz finishes, clear saved progress
+    const origShowResult = showResult;
+    showResult = function() {
+        clearState();
+        origShowResult();
+    };
+
+    // resume prompt on load
+    const saved = loadState();
     const savedLang = localStorage.getItem("shiroLang") || "en";
-    applyLang(savedLang);
+    if (saved && typeof saved.current === "number") {
+        const ok = confirm("Resume previous quiz session?");
+        if (ok) {
+            current = saved.current;
+            score = saved.score || 0;
+            applyLang(saved.currentLang || savedLang);
+        } else {
+            clearState();
+            applyLang(savedLang);
+        }
+    } else {
+        applyLang(savedLang);
+    }
 </script>
 </body>
 </html>

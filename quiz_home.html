@@ -339,10 +339,9 @@
         </div>
         <div class="modal-body" id="welcome-body">
             <p>Thanks for visiting! Currently this site only serves to test basic functions for the purpose of implementing quizzes that checks users' ability in detecting authenticity of a photo - that is, whether an image was generated with the usage of Generative AI or not.</p>
-            <p>This is an amateur project by a small team of students from class CN01, for course CO2001: Professional Skills for Engineers.</p>
+            <p>This is an amateur project by a small team of students from class <em>CN01</em>, for course <em>CO2001: Professional Skills for Engineers</em> of <em>Ho Chi Minh City University of Technology (HCMUT)</em></p>
         </div>
         <div class="modal-actions">
-            <button type="button" class="btn-secondary" id="modal-remind">Remind me later</button>
             <button type="button" class="btn-primary" id="modal-ok">Got it</button>
         </div>
     </div>
@@ -478,7 +477,6 @@
         const MODAL_KEY = 'shiro_welcome_shown_v1';
         const modalOverlay = document.getElementById('welcome-modal');
         const btnOk = document.getElementById('modal-ok');
-        const btnRemind = document.getElementById('modal-remind');
         const btnCloseX = document.getElementById('modal-close-x');
 
         function openModal() {
@@ -510,7 +508,6 @@
         }
 
         if (btnOk) btnOk.addEventListener('click', () => closeModal(true));
-        if (btnRemind) btnRemind.addEventListener('click', () => closeModal(false));
         if (btnCloseX) btnCloseX.addEventListener('click', () => closeModal(false));
 
         // Show modal automatically if not shown before
