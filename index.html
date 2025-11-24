@@ -126,6 +126,103 @@
             background: #16a34a;
         }
 
+        /* ===== INTRO OVERLAY ===== */
+        .intro-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15,23,42,0.88);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 1100;
+        }
+
+        .intro-overlay.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .intro-panel {
+            width: min(520px, 92vw);
+            background: #ffffff;
+            border-radius: 28px;
+            padding: clamp(24px, 5vw, 40px);
+            box-shadow: 0 25px 70px rgba(15,23,42,0.5);
+            text-align: center;
+        }
+
+        .intro-eyebrow {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            color: #818cf8;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .intro-panel h2 {
+            font-size: clamp(24px, 4vw, 32px);
+            margin-bottom: 12px;
+            color: #111827;
+        }
+
+        .intro-panel p {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .intro-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .intro-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .intro-btn.primary {
+            background: #22c55e;
+            color: #ffffff;
+            box-shadow: 0 15px 30px rgba(34,197,94,0.35);
+        }
+
+        .intro-btn.primary:hover {
+            background: #16a34a;
+        }
+
+        .intro-btn.ghost {
+            background: rgba(15,23,42,0.04);
+            color: #0f172a;
+        }
+
+        .intro-btn.ghost:hover {
+            background: rgba(15,23,42,0.08);
+        }
+
+        body.intro-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 520px) {
+            .intro-actions {
+                flex-direction: row;
+            }
+        }
+
         /* ===== FOOTER LANGUAGE BAR ===== */
         .lang-bar {
             border-top: 1px solid #e5e7eb;
@@ -203,6 +300,18 @@
     </style>
 </head>
 <body>
+<div class="intro-overlay" id="intro-overlay" aria-hidden="true">
+    <div class="intro-panel">
+        <div class="intro-eyebrow" id="intro-eyebrow"></div>
+        <h2 id="intro-title">Welcome to Shiro</h2>
+        <p id="intro-body">
+            This quick intro shows you what Shiro is about before you jump into the quizzes.
+        </p>
+        <div class="intro-actions">
+            <button type="button" class="intro-btn primary" id="intro-enter" style="margin: 0 auto;">Start exploring</button>
+        </div>
+    </div>
+</div>
 <!-- NAVBAR --> 
 <header class="navbar">
     <div class="nav-left">
@@ -256,15 +365,30 @@
     const translations = {
         vi: {
             title: "Phát hiện AI cùng Shiro",
-            startButton: "BẮT ĐẦU"
+            startButton: "BẮT ĐẦU",
+            introEyebrow: "Giới thiệu",
+            introTitle: "Chào mừng đến với Shiro",
+            introBody: "Đây là bản demo giúp bạn luyện tập khả năng nhận diện ảnh AI trước khi vào quiz.",
+            introPrimary: "Khám phá ngay",
+            introSecondary: "Bỏ qua lần này"
         },
         en: {
             title: "Detecting AI with Shiro",
-            startButton: "Get started"
+            startButton: "Get started",
+            introEyebrow: "Prototype",
+            introTitle: "Welcome to Shiro",
+            introBody: "This quick intro recaps what Shiro tests before you jump into the quizzes.",
+            introPrimary: "Start exploring",
+            introSecondary: "Skip for now"
         },
         jp: {
             title: "シロと一緒にAIを見抜こう",
-            startButton: "はじめよう"
+            startButton: "はじめよう",
+            introEyebrow: "イントロ",
+            introTitle: "Shiroへようこそ",
+            introBody: "クイズを始める前に、このデモの目的をかんたんに紹介します。",
+            introPrimary: "今すぐ体験",
+            introSecondary: "あとで読む"
         }
     };
 
@@ -275,6 +399,52 @@
     const langEn      = document.getElementById("lang-en");
 
     const langOptions = [langJp, langVi, langEn];
+    const introOverlay = document.getElementById("intro-overlay");
+    const introEyebrow = document.getElementById("intro-eyebrow");
+    const introTitleEl = document.getElementById("intro-title");
+    const introBodyEl  = document.getElementById("intro-body");
+    const introEnterBtn = document.getElementById("intro-enter");
+    const introSkipBtn  = document.getElementById("intro-skip");
+
+    const INTRO_STORAGE_KEY = "shiro_intro_seen_v1";
+
+    function openIntroOverlay() {
+        if (!introOverlay) return;
+        introOverlay.classList.add("is-open");
+        introOverlay.setAttribute("aria-hidden", "false");
+        document.body.classList.add("intro-open");
+    }
+
+    function closeIntroOverlay(persistSeen) {
+        if (!introOverlay) return;
+        introOverlay.classList.remove("is-open");
+        introOverlay.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("intro-open");
+
+        if (persistSeen) {
+            try {
+                localStorage.setItem(INTRO_STORAGE_KEY, "1");
+            } catch (err) {
+                /* ignore storage errors */
+            }
+        }
+    }
+
+    function shouldShowIntroOverlay() {
+        try {
+            return !localStorage.getItem(INTRO_STORAGE_KEY);
+        } catch (err) {
+            return true;
+        }
+    }
+
+    introEnterBtn?.addEventListener("click", () => closeIntroOverlay(true));
+    introSkipBtn?.addEventListener("click", () => closeIntroOverlay(false));
+    introOverlay?.addEventListener("click", (event) => {
+        if (event.target === introOverlay) {
+            closeIntroOverlay(false);
+        }
+    });
 
     // Hàm đổi ngôn ngữ
     function setLanguage(lang) {
@@ -282,6 +452,11 @@
 
         titleText.textContent = t.title;
         btnStart.textContent  = t.startButton;
+        if (introEyebrow) introEyebrow.textContent = t.introEyebrow || translations.en.introEyebrow;
+        if (introTitleEl) introTitleEl.textContent = t.introTitle || translations.en.introTitle;
+        if (introBodyEl) introBodyEl.textContent   = t.introBody || translations.en.introBody;
+        if (introEnterBtn) introEnterBtn.textContent = t.introPrimary || translations.en.introPrimary;
+        if (introSkipBtn) introSkipBtn.textContent   = t.introSecondary || translations.en.introSecondary;
 
         // Lưu vào localStorage để các trang khác dùng lại
         localStorage.setItem("shiroLang", lang);
@@ -306,6 +481,10 @@
     // Ngôn ngữ mặc định: đọc từ localStorage, nếu chưa có thì EN
     const savedLang = localStorage.getItem("shiroLang") || "en";
     setLanguage(savedLang);
+
+    if (shouldShowIntroOverlay()) {
+        requestAnimationFrame(() => setTimeout(openIntroOverlay, 200));
+    }
 </script>
 
 </body>

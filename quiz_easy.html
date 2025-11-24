@@ -189,6 +189,14 @@
             text-align: center;
         }
 
+        .rank-message {
+            margin-top: 6px;
+            font-size: 14px;
+            text-align: center;
+            color: #334155;
+            min-height: 20px;
+        }
+
         .restart-btn {
             margin: 18px auto 0;
             border-radius: 999px;
@@ -350,6 +358,7 @@
 
         <div class="feedback" id="feedback"></div>
         <div class="progress" id="progress-text"></div>
+        <div class="rank-message" id="rank-message"></div>
     </div>
 </main>
 
@@ -455,7 +464,12 @@
             resumeTitle: "Pick up where you left off?",
             resumeMessage: (q) => `You stopped at question ${q} before answering. Continue?`,
             resumeContinue: "Continue",
-            resumeRestart: "Start over"
+            resumeRestart: "Start over",
+            rankings: [
+                { max: 4, message: () => "Rookie detector – the AI still tricks you. Review the tells and try again." },
+                { max: 8, message: () => "Solid instincts! You're already spotting most of the fakes." },
+                { max: 10, message: () => "Unstoppable truth radar. AI images hardly fool you anymore." }
+            ]
         },
         vi: {
             defLabel: "Câu hỏi",
@@ -471,7 +485,12 @@
             resumeTitle: "Tiếp tục làm tiếp?",
             resumeMessage: (q) => `Lần trước bạn dừng ở câu ${q} (chưa trả lời). Bạn có muốn tiếp tục không?`,
             resumeContinue: "Tiếp tục",
-            resumeRestart: "Bắt đầu lại"
+            resumeRestart: "Bắt đầu lại",
+            rankings: [
+                { max: 4, message: () => "Tân binh chống AI – bạn vẫn bỏ lỡ nhiều dấu hiệu, thử lại nhé!" },
+                { max: 8, message: () => "Khá tốt! Bạn đã nhận ra phần lớn chi tiết bất thường." },
+                { max: 10, message: () => "Thợ săn AI thứ thiệt, khó có hình giả nào qua mặt bạn." }
+            ]
         },
         jp: {
             defLabel: "質問",
@@ -487,7 +506,12 @@
             resumeTitle: "再開しますか？",
             resumeMessage: (q) => `前回は第${q}問で中断しました（未回答）。続けますか？`,
             resumeContinue: "続ける",
-            resumeRestart: "最初から"
+            resumeRestart: "最初から",
+            rankings: [
+                { max: 4, message: () => "ビギナー判別士。まだAIにだまされがちなので、もう一度挑戦しましょう。" },
+                { max: 8, message: () => "かなり良い感覚です！多くの違和感を見抜けています。" },
+                { max: 10, message: () => "AIキラー級。偽画像をほぼ完全に見抜けます。" }
+            ]
         }
     };
 
@@ -497,6 +521,7 @@
     const definitionText  = document.getElementById("definition-text");
     const feedbackEl      = document.getElementById("feedback");
     const progressText    = document.getElementById("progress-text");
+    const rankMessageEl   = document.getElementById("rank-message");
     const imageEl         = document.getElementById("question-image");
     const cardEl          = document.getElementById("card");
 
@@ -561,6 +586,10 @@
 
         feedbackEl.textContent = "";
         feedbackEl.className   = "feedback";
+        if (rankMessageEl) {
+            rankMessageEl.textContent = "";
+            rankMessageEl.style.display = "none";
+        }
 
         // nhãn Yes/No theo ngôn ngữ
         answerButtons[0].textContent = t.yes;
@@ -576,6 +605,15 @@
         locked = false;
     }
 
+    function getRankMessage(scoreValue) {
+        const tiers = Array.isArray(t.rankings) ? t.rankings : [];
+        const tier = tiers.find(entry => scoreValue <= entry.max);
+        if (!tier) return "";
+        return typeof tier.message === "function"
+            ? tier.message(scoreValue, questions.length)
+            : tier.message;
+    }
+
     function showResult() {
         clearState();
         definitionText.textContent = "";
@@ -584,6 +622,11 @@
         feedbackEl.textContent     = t.finished(score, questions.length);
         feedbackEl.className       = "feedback correct";
         progressText.textContent   = "";
+        if (rankMessageEl) {
+            const rankText = getRankMessage(score);
+            rankMessageEl.textContent = rankText;
+            rankMessageEl.style.display = rankText ? "block" : "none";
+        }
 
         answerButtons.forEach(btn => btn.style.display = "none");
 
