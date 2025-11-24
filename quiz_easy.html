@@ -7,7 +7,66 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
     <link rel="stylesheet" href="assets/ui.css">
     <script src="assets/ui.js" defer></script>
+    <script>
+        (function(){
+            try{
+                const savedTheme = localStorage.getItem('shiroTheme');
+                if(savedTheme === 'dark'){
+                    document.documentElement.classList.add('theme-dark');
+                }
+            }catch(err){
+                /* ignore */
+            }
+        })();
+    </script>
     <style>
+        :root {
+            color-scheme: light;
+            --bg-color: #f3f4f6;
+            --text-color: #111827;
+            --nav-bg: #ffffff;
+            --nav-border: #e5e7eb;
+            --nav-button: #6b7280;
+            --nav-button-hover: #111827;
+            --card-bg: #ffffff;
+            --card-text: #111827;
+            --card-shadow: 0 20px 50px rgba(15,23,42,0.12);
+            --answer-bg: #f9fafb;
+            --answer-border: #e5e7eb;
+            --answer-hover-bg: #e5f2ff;
+            --answer-hover-border: #93c5fd;
+            --subtitle-color: #6b7280;
+            --rank-color: #334155;
+            --modal-overlay: rgba(15,23,42,0.45);
+            --theme-toggle-bg: rgba(15,23,42,0.08);
+            --theme-toggle-color: #0f172a;
+            --theme-toggle-border: rgba(15,23,42,0.13);
+            --image-bg: #f9fafb;
+        }
+
+        .theme-dark {
+            color-scheme: dark;
+            --bg-color: #020617;
+            --text-color: #e2e8f0;
+            --nav-bg: rgba(2,6,23,0.85);
+            --nav-border: #1e293b;
+            --nav-button: #cbd5f5;
+            --nav-button-hover: #ffffff;
+            --card-bg: rgba(15,23,42,0.85);
+            --card-text: #e2e8f0;
+            --card-shadow: 0 20px 50px rgba(2,6,23,0.65);
+            --answer-bg: rgba(148,163,184,0.1);
+            --answer-border: rgba(148,163,184,0.25);
+            --answer-hover-bg: rgba(59,130,246,0.25);
+            --answer-hover-border: rgba(59,130,246,0.6);
+            --subtitle-color: #cbd5f5;
+            --rank-color: #e2e8f0;
+            --modal-overlay: rgba(2,6,23,0.7);
+            --theme-toggle-bg: rgba(15,23,42,0.75);
+            --theme-toggle-color: #f8fafc;
+            --theme-toggle-border: rgba(248,250,252,0.25);
+            --image-bg: rgba(15,23,42,0.65);
+        }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -16,8 +75,9 @@
         }
 
         body {
-            background: #f3f4f6;
-            color: #111827;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: background 0.25s ease, color 0.25s ease;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -32,12 +92,12 @@
         /* NAVBAR */
         .navbar {
             height: clamp(60px, 9vw, 72px);
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--nav-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 clamp(16px, 4vw, 48px);
-            background: #ffffff;
+            background: var(--nav-bg);
         }
 
         .nav-left {
@@ -60,11 +120,11 @@
 
         .nav-right {
             font-size: 13px;
-            color: #6b7280;
+            color: var(--nav-button);
             cursor: pointer;
         }
 
-        .nav-right:hover { color: #111827; }
+        .nav-right:hover { color: var(--nav-button-hover); }
 
         /* MAIN */
         .main {
@@ -76,19 +136,17 @@
         }
 
         .card {
-            background: #ffffff;
-            color: #111827;
+            background: var(--card-bg);
+            color: var(--card-text);
             border-radius: 24px;
             padding: clamp(20px, 4vw, 36px);
             max-width: 720px;
             width: min(100%, 720px);
-            box-shadow: 0 20px 50px rgba(15,23,42,0.12);
+            box-shadow: var(--card-shadow);
 
             display: flex;
             flex-direction: column;
             align-items: stretch;
-
-            animation: cardIn 0.35s ease-out;
         }
 
         @keyframes cardIn {
@@ -96,9 +154,13 @@
             to   { opacity: 1; transform: scale(1); }
         }
 
+        .card.is-transitioning {
+            animation: cardIn 0.35s ease-out;
+        }
+
         .question-top-label {
             font-size: 12px;
-            color: #6b7280;
+            color: var(--subtitle-color);
             margin-bottom: 6px;
         }
 
@@ -114,18 +176,18 @@
             margin-bottom: 18px;
         }
 
-       .question-image-box img {
-        width: min(320px, 80vw); /* co theo chiều rộng màn hình, max ~320px */
-        aspect-ratio: 1 / 1;     /* giữ tỉ lệ vuông */
-        object-fit: contain;     /* không cắt mất nội dung ảnh */
-        border-radius: 16px;
-        background: #f9fafb;
-        }
+    .question-image-box img {
+     width: min(320px, 80vw);
+     aspect-ratio: 1 / 1;
+     object-fit: contain;
+     border-radius: 16px;
+     background: var(--image-bg);
+     }
 
         .answers-label {
             font-size: 13px;
             margin-bottom: 8px;
-            color: #4b5563;
+            color: var(--subtitle-color);
             text-align: center;
         }
 
@@ -139,9 +201,9 @@
         .answer-btn {
             flex: 0 0 40%;
             border-radius: 14px;
-            border: 1px solid #e5e7eb;
-            background: #f9fafb;
-            color: #111827;
+            border: 1px solid var(--answer-border);
+            background: var(--answer-bg);
+            color: var(--text-color);
             padding: 14px 16px;
             text-align: center;
             font-size: 14px;
@@ -152,8 +214,8 @@
         }
 
         .answer-btn:hover {
-            background: #e5f2ff;
-            border-color: #93c5fd;
+            background: var(--answer-hover-bg);
+            border-color: var(--answer-hover-border);
             transform: translateY(-1px);
         }
 
@@ -193,7 +255,7 @@
             margin-top: 6px;
             font-size: 14px;
             text-align: center;
-            color: #334155;
+            color: var(--rank-color);
             min-height: 20px;
         }
 
@@ -238,7 +300,7 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
-            background: rgba(15,23,42,0.45);
+            background: var(--modal-overlay);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             opacity: 0;
@@ -328,9 +390,45 @@
                 flex: 1;
             }
         }
+        .theme-dark .resume-dialog {
+            background: rgba(15,23,42,0.9);
+            color: #e2e8f0;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            border-radius: 999px;
+            border: 1px solid var(--theme-toggle-border);
+            background: var(--theme-toggle-bg);
+            color: var(--theme-toggle-color);
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1400;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 640px) {
+            .theme-toggle {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
     </style>
 </head>
 <body>
+<button type="button" class="theme-toggle" id="theme-toggle">
+    <span id="theme-toggle-label">Dark mode</span>
+</button>
 <header class="navbar">
     <div class="nav-left">
         <img src="assets/logo.png" alt="Shiro logo">
@@ -374,6 +472,77 @@
 </div>
 
 <script>
+    const THEME_STORAGE_KEY = "shiroTheme";
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const themeToggleLabel = document.getElementById("theme-toggle-label");
+
+    function applyThemePreference(theme) {
+        if (theme === "dark") {
+            document.documentElement.classList.add("theme-dark");
+        } else {
+            document.documentElement.classList.remove("theme-dark");
+        }
+
+        if (themeToggleLabel) {
+            themeToggleLabel.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+        }
+    }
+
+    (function initTheme() {
+        let storedTheme = null;
+        try {
+            storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        } catch (err) {
+            storedTheme = null;
+        }
+
+        let resolvedTheme = storedTheme;
+        if (!resolvedTheme) {
+            const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            resolvedTheme = prefersDark ? "dark" : "light";
+        }
+
+        applyThemePreference(resolvedTheme);
+
+        if (!storedTheme) {
+            try {
+                localStorage.setItem(THEME_STORAGE_KEY, resolvedTheme);
+            } catch (err) {
+                /* ignore */
+            }
+        }
+    })();
+
+    themeToggleBtn?.addEventListener("click", () => {
+        const nextTheme = document.documentElement.classList.contains("theme-dark") ? "light" : "dark";
+        applyThemePreference(nextTheme);
+        try {
+            localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+        } catch (err) {
+            /* ignore */
+        }
+    });
+
+    if (typeof window.matchMedia === "function") {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        const listener = (event) => {
+            let storedTheme = null;
+            try {
+                storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            } catch (err) {
+                storedTheme = null;
+            }
+            if (storedTheme) return;
+            applyThemePreference(event.matches ? "dark" : "light");
+        };
+
+        if (mq.addEventListener) {
+            mq.addEventListener("change", listener);
+        } else if (mq.addListener) {
+            mq.addListener(listener);
+        }
+    }
+
     // 10 câu – mỗi câu có vi/en/jp
     const questions = [
         {
@@ -544,6 +713,18 @@
     let currentLang = "en";
     let t       = uiTexts.en;
     let pendingResumeState = null;
+    const NEXT_QUESTION_DELAY = 500;
+
+    function playCardTransition() {
+        if (!cardEl) return;
+        cardEl.classList.add("is-transitioning");
+    }
+
+    if (cardEl) {
+        cardEl.addEventListener("animationend", () => {
+            cardEl.classList.remove("is-transitioning");
+        });
+    }
 
     function updateResumeCopy(questionNumberOverride) {
         const candidate = typeof questionNumberOverride === "number"
@@ -574,9 +755,7 @@
     function renderQuestion() {
         const q = questions[current];
 
-        cardEl.style.animation = "none";
-        void cardEl.offsetWidth;
-        cardEl.style.animation = "cardIn 0.35s ease-out";
+        playCardTransition();
 
         const qText = q[currentLang] || q.vi;
         definitionText.textContent = qText;
@@ -687,7 +866,7 @@
             } else {
                 showResult();
             }
-        }, 900);
+        }, NEXT_QUESTION_DELAY);
     }
 
     answerButtons.forEach((btn, idx) => {

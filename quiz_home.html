@@ -7,7 +7,75 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
     <link rel="stylesheet" href="assets/ui.css">
     <script src="assets/ui.js" defer></script>
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem('shiroTheme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('theme-dark');
+                }
+            } catch (err) {
+                /* ignore */
+            }
+        })();
+    </script>
     <style>
+        :root {
+            color-scheme: light;
+            --bg-color: #f9fafb;
+            --text-color: #111827;
+            --nav-bg: #ffffff;
+            --nav-border: #e5e7eb;
+            --nav-button: #6b7280;
+            --nav-button-hover: #111827;
+            --card-bg: #ffffff;
+            --card-shadow: 0 16px 40px rgba(15,23,42,0.08);
+            --subtitle-color: #6b7280;
+            --muted-color: #4b5563;
+            --meta-color: #9ca3af;
+            --badge-easy-bg: #ecfdf3;
+            --badge-easy-text: #166534;
+            --badge-medium-bg: #eff6ff;
+            --badge-medium-text: #1d4ed8;
+            --badge-hard-bg: #fef2f2;
+            --badge-hard-text: #b91c1c;
+            --modal-bg: #ffffff;
+            --modal-text: #0f172a;
+            --modal-body: #475569;
+            --btn-secondary-border: #e5e7eb;
+            --theme-toggle-bg: rgba(15,23,42,0.08);
+            --theme-toggle-color: #0f172a;
+            --theme-toggle-border: rgba(15,23,42,0.13);
+        }
+
+        .theme-dark {
+            color-scheme: dark;
+            --bg-color: #020617;
+            --text-color: #e2e8f0;
+            --nav-bg: rgba(2,6,23,0.85);
+            --nav-border: #1e293b;
+            --nav-button: #cbd5f5;
+            --nav-button-hover: #ffffff;
+            --card-bg: rgba(15,23,42,0.85);
+            --card-shadow: 0 18px 48px rgba(2,6,23,0.65);
+            --subtitle-color: #94a3b8;
+            --muted-color: #cbd5f5;
+            --meta-color: #94a3b8;
+            --badge-easy-bg: rgba(34,197,94,0.18);
+            --badge-easy-text: #4ade80;
+            --badge-medium-bg: rgba(59,130,246,0.18);
+            --badge-medium-text: #93c5fd;
+            --badge-hard-bg: rgba(248,113,113,0.18);
+            --badge-hard-text: #fca5a5;
+            --modal-bg: rgba(15,23,42,0.95);
+            --modal-text: #e2e8f0;
+            --modal-body: #cbd5f5;
+            --btn-secondary-border: rgba(148,163,184,0.35);
+            --theme-toggle-bg: rgba(15,23,42,0.6);
+            --theme-toggle-color: #f8fafc;
+            --theme-toggle-border: rgba(248,250,252,0.2);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -16,22 +84,23 @@
         }
 
         body {
-            background: #f9fafb;
-            color: #111827;
+            background: var(--bg-color);
+            color: var(--text-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: background 0.25s ease, color 0.25s ease;
         }
 
         /* NAVBAR */
         .navbar {
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--nav-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 clamp(16px, 5vw, 56px);
             height: clamp(64px, 10vw, 80px);
-            background: #ffffff;
+            background: var(--nav-bg);
         }
 
         .nav-left {
@@ -56,12 +125,12 @@
         .nav-right {
             font-size: 14px;
             font-weight: 500;
-            color: #6b7280;
+            color: var(--nav-button);
             cursor: pointer;
         }
 
         .nav-right:hover {
-            color: #111827;
+            color: var(--nav-button-hover);
         }
 
         /* MAIN */
@@ -86,7 +155,7 @@
 
         .page-subtitle {
             font-size: 14px;
-            color: #6b7280;
+            color: var(--subtitle-color);
             margin-bottom: 24px;
         }
 
@@ -97,10 +166,10 @@
         }
 
         .mode-card {
-            background: #ffffff;
+            background: var(--card-bg);
             border-radius: 20px;
             padding: 24px 20px;
-            box-shadow: 0 16px 40px rgba(15,23,42,0.08);
+            box-shadow: var(--card-shadow);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -116,14 +185,14 @@
 
         .mode-desc {
             font-size: 13px;
-            color: #4b5563;
+            color: var(--muted-color);
             margin-bottom: 16px;
             min-height: 60px;
         }
 
         .mode-meta {
             font-size: 12px;
-            color: #9ca3af;
+            color: var(--meta-color);
             margin-bottom: 12px;
         }
 
@@ -156,18 +225,18 @@
         }
 
         .badge-easy {
-            background: #ecfdf3;
-            color: #166534;
+            background: var(--badge-easy-bg);
+            color: var(--badge-easy-text);
         }
 
         .badge-medium {
-            background: #eff6ff;
-            color: #1d4ed8;
+            background: var(--badge-medium-bg);
+            color: var(--badge-medium-text);
         }
 
         .badge-hard {
-            background: #fef2f2;
-            color: #b91c1c;
+            background: var(--badge-hard-bg);
+            color: var(--badge-hard-text);
         }
 
         @media (max-width: 800px) {
@@ -199,13 +268,13 @@
         }
 
         .modal {
-            background: #fff;
+            background: var(--modal-bg);
             border-radius: 12px;
             max-width: 720px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(2,6,23,0.35);
             padding: 20px 22px;
-            color: #0f172a;
+            color: var(--modal-text);
         }
 
         .modal-header {
@@ -223,7 +292,7 @@
 
         .modal-body {
             font-size: 14px;
-            color: #475569;
+            color: var(--modal-body);
             margin-bottom: 16px;
             line-height: 1.5;
         }
@@ -236,7 +305,7 @@
 
         .btn-secondary {
             background: transparent;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--btn-secondary-border);
             padding: 10px 14px;
             border-radius: 8px;
             cursor: pointer;
@@ -252,6 +321,35 @@
             cursor: pointer;
             font-weight: 700;
         }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            border-radius: 999px;
+            border: 1px solid var(--theme-toggle-border);
+            background: var(--theme-toggle-bg);
+            color: var(--theme-toggle-color);
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1400;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 640px) {
+            .theme-toggle {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -264,6 +362,10 @@
         Return
     </button>
 </header>
+
+<button type="button" class="theme-toggle" id="theme-toggle">
+    <span id="theme-toggle-label">Dark mode</span>
+</button>
 
 <main class="main">
     <div class="container">
@@ -347,6 +449,77 @@
 </div>
 
 <script>
+    const THEME_STORAGE_KEY = "shiroTheme";
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const themeToggleLabel = document.getElementById("theme-toggle-label");
+
+    function applyThemePreference(theme) {
+        if (theme === "dark") {
+            document.documentElement.classList.add("theme-dark");
+        } else {
+            document.documentElement.classList.remove("theme-dark");
+        }
+
+        if (themeToggleLabel) {
+            themeToggleLabel.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+        }
+    }
+
+    (function initTheme() {
+        let storedTheme = null;
+        try {
+            storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        } catch (err) {
+            storedTheme = null;
+        }
+
+        let resolvedTheme = storedTheme;
+        if (!resolvedTheme) {
+            const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            resolvedTheme = prefersDark ? "dark" : "light";
+        }
+
+        applyThemePreference(resolvedTheme);
+
+        if (!storedTheme) {
+            try {
+                localStorage.setItem(THEME_STORAGE_KEY, resolvedTheme);
+            } catch (err) {
+                /* ignore */
+            }
+        }
+    })();
+
+    themeToggleBtn?.addEventListener("click", () => {
+        const nextTheme = document.documentElement.classList.contains("theme-dark") ? "light" : "dark";
+        applyThemePreference(nextTheme);
+        try {
+            localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+        } catch (err) {
+            /* ignore */
+        }
+    });
+
+    if (typeof window.matchMedia === "function") {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        const listener = (event) => {
+            let storedTheme = null;
+            try {
+                storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            } catch (err) {
+                storedTheme = null;
+            }
+            if (storedTheme) return;
+            applyThemePreference(event.matches ? "dark" : "light");
+        };
+
+        if (mq.addEventListener) {
+            mq.addEventListener("change", listener);
+        } else if (mq.addListener) {
+            mq.addListener(listener);
+        }
+    }
+
     // Logout -> quay về trang chính
     document.getElementById("btn-logout").addEventListener("click", () => {
         window.location.href = "index.html";

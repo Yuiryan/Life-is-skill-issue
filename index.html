@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&display=swap">
     <link rel="stylesheet" href="assets/ui.css">
     <script src="assets/ui.js" defer></script>
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem('shiroTheme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('theme-dark');
+                }
+            } catch (err) {
+                /* ignore */
+            }
+        })();
+    </script>
     <style>
         * {
             box-sizing: border-box;
@@ -304,9 +316,100 @@
                 justify-content: center;
             }
         }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(15,23,42,0.13);
+            background: rgba(15,23,42,0.08);
+            color: #0f172a;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1400;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 640px) {
+            .theme-toggle {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        html.theme-dark body {
+            background: #020617;
+            color: #e2e8f0;
+        }
+
+        html.theme-dark .navbar {
+            background: rgba(2,6,23,0.85);
+            border-color: #1e293b;
+        }
+
+        html.theme-dark .nav-right {
+            color: #cbd5f5;
+        }
+
+        html.theme-dark .nav-right:hover {
+            color: #ffffff;
+        }
+
+        html.theme-dark .shiro-title {
+            color: #e2e8f0;
+        }
+
+        html.theme-dark .intro-panel {
+            background: rgba(15,23,42,0.92);
+            color: #e2e8f0;
+        }
+
+        html.theme-dark .intro-panel h2 {
+            color: #f8fafc;
+        }
+
+        html.theme-dark .intro-panel p {
+            color: #cbd5f5;
+        }
+
+        html.theme-dark .intro-btn.ghost {
+            background: rgba(255,255,255,0.08);
+            color: #e2e8f0;
+        }
+
+        html.theme-dark .intro-btn.ghost:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        html.theme-dark .lang-bar {
+            background: rgba(2,6,23,0.4);
+            border-color: #1e293b;
+        }
+
+        html.theme-dark .lang-label {
+            color: #e2e8f0;
+        }
+
+        html.theme-dark .theme-toggle {
+            background: rgba(15,23,42,0.75);
+            color: #f8fafc;
+            border-color: rgba(248,250,252,0.2);
+        }
     </style>
 </head>
 <body>
+<button type="button" class="theme-toggle" id="theme-toggle">
+    <span id="theme-toggle-label">Dark mode</span>
+</button>
 <div class="intro-overlay" id="intro-overlay" aria-hidden="true">
     <div class="intro-panel">
         <div class="intro-eyebrow" id="intro-eyebrow"></div>
@@ -368,6 +471,77 @@
 
 <!-- ===== SCRIPT: TƯƠNG TÁC ===== -->
 <script>
+    const THEME_STORAGE_KEY = "shiroTheme";
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    const themeToggleLabel = document.getElementById("theme-toggle-label");
+
+    function applyThemePreference(theme) {
+        if (theme === "dark") {
+            document.documentElement.classList.add("theme-dark");
+        } else {
+            document.documentElement.classList.remove("theme-dark");
+        }
+
+        if (themeToggleLabel) {
+            themeToggleLabel.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+        }
+    }
+
+    (function initTheme() {
+        let storedTheme = null;
+        try {
+            storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+        } catch (err) {
+            storedTheme = null;
+        }
+
+        let resolvedTheme = storedTheme;
+        if (!resolvedTheme) {
+            const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            resolvedTheme = prefersDark ? "dark" : "light";
+        }
+
+        applyThemePreference(resolvedTheme);
+
+        if (!storedTheme) {
+            try {
+                localStorage.setItem(THEME_STORAGE_KEY, resolvedTheme);
+            } catch (err) {
+                /* ignore */
+            }
+        }
+    })();
+
+    themeToggleBtn?.addEventListener("click", () => {
+        const nextTheme = document.documentElement.classList.contains("theme-dark") ? "light" : "dark";
+        applyThemePreference(nextTheme);
+        try {
+            localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+        } catch (err) {
+            /* ignore */
+        }
+    });
+
+    if (typeof window.matchMedia === "function") {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        const listener = (event) => {
+            let storedTheme = null;
+            try {
+                storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            } catch (err) {
+                storedTheme = null;
+            }
+            if (storedTheme) return;
+            applyThemePreference(event.matches ? "dark" : "light");
+        };
+
+        if (mq.addEventListener) {
+            mq.addEventListener("change", listener);
+        } else if (mq.addListener) {
+            mq.addListener(listener);
+        }
+    }
+
     // 1. Dữ liệu đa ngôn ngữ
     const translations = {
         vi: {
