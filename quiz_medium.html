@@ -217,6 +217,108 @@
             .question-image-box img{width:150px;height:150px;}
             .answer-btn{flex:1 1 100%;}
         }
+
+        body.resume-modal-open{
+            overflow:hidden;
+        }
+
+        .resume-overlay{
+            position:fixed;
+            inset:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:24px;
+            background:rgba(15,23,42,.45);
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+            opacity:0;
+            pointer-events:none;
+            transition:opacity .25s ease;
+            z-index:1000;
+        }
+
+        .resume-overlay.is-open{
+            opacity:1;
+            pointer-events:auto;
+        }
+
+        .resume-dialog{
+            width:min(420px,90vw);
+            background:rgba(255,255,255,.9);
+            border-radius:24px;
+            padding:clamp(20px,4vw,32px);
+            text-align:center;
+            box-shadow:0 25px 60px rgba(15,23,42,.25);
+            backdrop-filter:blur(6px);
+            -webkit-backdrop-filter:blur(6px);
+        }
+
+        .resume-title{
+            font-size:1.15rem;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+
+        .resume-message{
+            font-size:.95rem;
+            color:#4b5563;
+            line-height:1.5;
+            margin-bottom:20px;
+        }
+
+        .resume-actions{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .resume-btn{
+            border:none;
+            border-radius:999px;
+            padding:12px 20px;
+            font-size:15px;
+            font-weight:600;
+            cursor:pointer;
+            transition:transform .15s ease,box-shadow .15s ease;
+        }
+
+        .resume-btn:focus{
+            outline:2px solid #2563eb;
+            outline-offset:3px;
+        }
+
+        .resume-btn.primary{
+            background:#2563eb;
+            color:#fff;
+            box-shadow:0 12px 30px rgba(37,99,235,.35);
+        }
+
+        .resume-btn.primary:hover{
+            transform:translateY(-1px);
+            box-shadow:0 16px 32px rgba(37,99,235,.4);
+        }
+
+        .resume-btn.ghost{
+            background:rgba(255,255,255,.85);
+            color:#111827;
+            border:1px solid rgba(17,24,39,.08);
+        }
+
+        .resume-btn.ghost:hover{
+            background:rgba(249,250,251,.95);
+            transform:translateY(-1px);
+        }
+
+        @media (min-width:480px){
+            .resume-actions{
+                flex-direction:row;
+            }
+
+            .resume-actions .resume-btn{
+                flex:1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -249,6 +351,17 @@
         <div class="progress" id="progress-text"></div>
     </div>
 </main>
+
+<div class="resume-overlay" id="resume-overlay" aria-hidden="true">
+    <div class="resume-dialog">
+        <div class="resume-title" id="resume-title"></div>
+        <p class="resume-message" id="resume-message"></p>
+        <div class="resume-actions">
+            <button type="button" class="resume-btn primary" id="resume-continue"></button>
+            <button type="button" class="resume-btn ghost" id="resume-restart"></button>
+        </div>
+    </div>
+</div>
 
 <script>
     // ===== 10 CÂU HỎI MEDIUM – mỗi câu có vi/en/jp =====
@@ -337,7 +450,11 @@
             no: "Not AI",
             progress: (cur, total) => `Question ${cur} of ${total}`,
             finished: (s, t) => `Finished! You got ${s} / ${t} correct.`,
-            restart: "Restart"
+            restart: "Restart",
+            resumeTitle: "Pick up where you left off?",
+            resumeMessage: (q) => `You stopped at question ${q} before answering. Continue?`,
+            resumeContinue: "Continue",
+            resumeRestart: "Start over"
         },
         vi: {
             defLabel: "Câu hỏi",
@@ -349,7 +466,11 @@
             no: "Không phải AI",
             progress: (cur, total) => `Câu ${cur} / ${total}`,
             finished: (s, t) => `Hoàn thành! Bạn đúng ${s} / ${t} câu.`,
-            restart: "Làm lại"
+            restart: "Làm lại",
+            resumeTitle: "Tiếp tục làm tiếp?",
+            resumeMessage: (q) => `Lần trước bạn dừng ở câu ${q} (chưa trả lời). Bạn có muốn tiếp tục không?`,
+            resumeContinue: "Tiếp tục",
+            resumeRestart: "Bắt đầu lại"
         },
         jp: {
             defLabel: "質問",
@@ -361,7 +482,11 @@
             no: "AIではない",
             progress: (cur, total) => `${total}問中 ${cur}問目`,
             finished: (s, tot) => `お疲れさま！ ${tot}問中${s}問正解しました。`,
-            restart: "もう一度"
+            restart: "もう一度",
+            resumeTitle: "再開しますか？",
+            resumeMessage: (q) => `前回は第${q}問で中断しました（未回答）。続けますか？`,
+            resumeContinue: "続ける",
+            resumeRestart: "最初から"
         }
     };
 
@@ -379,11 +504,31 @@
         document.getElementById("ans-1")
     ];
 
+    const resumeOverlay     = document.getElementById("resume-overlay");
+    const resumeTitleEl     = document.getElementById("resume-title");
+    const resumeMessageEl   = document.getElementById("resume-message");
+    const resumeContinueBtn = document.getElementById("resume-continue");
+    const resumeRestartBtn  = document.getElementById("resume-restart");
+
+    const savedLang = localStorage.getItem("shiroLang") || "en";
+
     let current = 0;
     let score   = 0;
     let locked  = false;
     let currentLang = "en";
     let t       = uiTexts.en;
+    let pendingResumeState = null;
+
+    function updateResumeCopy(questionNumberOverride){
+        const candidate = typeof questionNumberOverride === "number"
+            ? questionNumberOverride
+            : Math.min(current + 1, questions.length);
+
+        resumeTitleEl.textContent = t.resumeTitle;
+        resumeMessageEl.textContent = t.resumeMessage(candidate);
+        resumeContinueBtn.textContent = t.resumeContinue;
+        resumeRestartBtn.textContent = t.resumeRestart;
+    }
 
     function applyLang(lang){
         currentLang = lang;
@@ -393,6 +538,10 @@
         labelChoose.textContent     = t.chooseLabel;
         btnBack.textContent         = t.back;
 
+        const resumeNumber = pendingResumeState
+            ? Math.min(sanitizeIndex(pendingResumeState.current) + 1, questions.length)
+            : undefined;
+        updateResumeCopy(resumeNumber);
         renderQuestion();
     }
 
@@ -418,6 +567,7 @@
         answerButtons.forEach(btn=>{
             btn.classList.remove("correct","wrong");
             btn.disabled = false;
+            btn.style.display = "";
         });
 
         progressText.textContent = t.progress(current+1, questions.length);
@@ -425,6 +575,7 @@
     }
 
     function showResult(){
+        clearState();
         definitionText.textContent = "";
         imageEl.style.visibility   = "hidden";
         labelChoose.textContent    = "";
@@ -447,6 +598,8 @@
         locked = true;
 
         const q = questions[current];
+        const nextIndex = current + 1;
+        const willFinish = nextIndex >= questions.length;
         answerButtons.forEach(btn=>btn.disabled=true);
 
         if(index === q.correct){
@@ -461,9 +614,11 @@
             answerButtons[q.correct].classList.add("correct");
         }
 
+        current = nextIndex;
+        persistState();
+
         setTimeout(()=>{
-            current++;
-            if(current < questions.length) renderQuestion();
+            if(!willFinish) renderQuestion();
             else showResult();
         },900);
     }
@@ -472,12 +627,120 @@
         btn.addEventListener("click", ()=>handleAnswer(idx));
     });
 
+    const STORAGE_KEY = "shiroQuiz_medium";
+
+    function shouldPersistProgress(index = current){
+        return Number.isFinite(index) && index > 0 && index < questions.length;
+    }
+
+    function persistState(){
+        if(!shouldPersistProgress()){
+            clearState();
+            return;
+        }
+
+        try{
+            const payload = { current, score, currentLang };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        }catch(err){
+            /* ignore */
+        }
+    }
+
+    function readState(){
+        try{
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        }catch(err){
+            return null;
+        }
+    }
+
+    function clearState(){
+        try{
+            localStorage.removeItem(STORAGE_KEY);
+        }catch(err){
+            /* ignore */
+        }
+    }
+
+    function sanitizeIndex(value){
+        const num = Number(value);
+        if(!Number.isFinite(num)) return 0;
+        return Math.min(Math.max(Math.floor(num), 0), questions.length - 1);
+    }
+
+    function sanitizeScore(value){
+        const num = Number(value);
+        if(!Number.isFinite(num) || num < 0) return 0;
+        return Math.min(Math.floor(num), questions.length);
+    }
+
+    function hasResumeProgress(state){
+        if(!state) return false;
+        const idx = Number(state.current);
+        return Number.isFinite(idx) && idx > 0 && idx < questions.length;
+    }
+
+    function openResumePrompt(state){
+        pendingResumeState = state;
+        const qNumber = Math.min(sanitizeIndex(state.current) + 1, questions.length);
+        updateResumeCopy(qNumber);
+
+        resumeOverlay.classList.add("is-open");
+        resumeOverlay.setAttribute("aria-hidden","false");
+        document.body.classList.add("resume-modal-open");
+
+        requestAnimationFrame(()=>resumeContinueBtn.focus({preventScroll:true}));
+    }
+
+    function closeResumePrompt(){
+        resumeOverlay.classList.remove("is-open");
+        resumeOverlay.setAttribute("aria-hidden","true");
+        document.body.classList.remove("resume-modal-open");
+    }
+
+    resumeContinueBtn.addEventListener("click", ()=>{
+        if(!pendingResumeState){
+            closeResumePrompt();
+            return;
+        }
+
+        const targetIndex = sanitizeIndex(pendingResumeState.current);
+        current = targetIndex;
+        score = sanitizeScore(pendingResumeState.score);
+        const langToApply = pendingResumeState.currentLang || savedLang;
+
+        pendingResumeState = null;
+        applyLang(langToApply);
+        closeResumePrompt();
+        persistState();
+    });
+
+    resumeRestartBtn.addEventListener("click", ()=>{
+        pendingResumeState = null;
+        current = 0;
+        score = 0;
+        clearState();
+        renderQuestion();
+        closeResumePrompt();
+    });
+
     btnBack.addEventListener("click", ()=>{
+        persistState();
         window.location.href = "quiz_home.html";
     });
 
-    const savedLang = localStorage.getItem("shiroLang") || "en";
+    window.addEventListener("beforeunload", ()=>persistState());
+
+    const savedState = readState();
     applyLang(savedLang);
+
+    if(hasResumeProgress(savedState)){
+        openResumePrompt(savedState);
+    }else if(savedState){
+        clearState();
+    }
 </script>
 </body>
 </html>
