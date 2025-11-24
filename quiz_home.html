@@ -182,6 +182,76 @@
                 padding: 16px;
             }
         }
+        /* Modal / pop-up styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.45);
+            z-index: 1200;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 720px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(2,6,23,0.35);
+            padding: 20px 22px;
+            color: #0f172a;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        } 
+
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -259,6 +329,24 @@
         </div>
     </div>
 </main>
+
+<!-- Welcome modal shown only on first visit -->
+<div class="modal-overlay" id="welcome-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+        <div class="modal-header">
+            <div class="modal-title" id="welcome-title">Welcome to Shiro</div>
+            <button type="button" id="modal-close-x" aria-label="Close">✕</button>
+        </div>
+        <div class="modal-body" id="welcome-body">
+            <p>Thanks for visiting! This popup appears only on your first visit to this page. Use it to show announcements, tips, or quick start instructions.</p>
+            <p>Sample testing text: Try the Easy mode first to warm up — good luck!</p>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="modal-remind">Remind me later</button>
+            <button type="button" class="btn-primary" id="modal-ok">Got it</button>
+        </div>
+    </div>
+</div>
 
 <script>
     // Logout -> quay về trang chính
@@ -384,6 +472,59 @@
     // đọc ngôn ngữ đã chọn từ index/login
     const savedLang = localStorage.getItem("shiroLang") || "en";
     applyQuizLang(savedLang);
+
+    // --- Welcome modal: show once per user using localStorage ---
+    (function () {
+        const MODAL_KEY = 'shiro_welcome_shown_v1';
+        const modalOverlay = document.getElementById('welcome-modal');
+        const btnOk = document.getElementById('modal-ok');
+        const btnRemind = document.getElementById('modal-remind');
+        const btnCloseX = document.getElementById('modal-close-x');
+
+        function openModal() {
+            if (!modalOverlay) return;
+            modalOverlay.classList.add('open');
+            modalOverlay.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeModal(doNotShowAgain) {
+            if (!modalOverlay) return;
+            modalOverlay.classList.remove('open');
+            modalOverlay.setAttribute('aria-hidden', 'true');
+            try {
+                if (doNotShowAgain) {
+                    localStorage.setItem(MODAL_KEY, '1');
+                }
+            } catch (e) {
+                // ignore localStorage errors
+            }
+        }
+
+        // Click outside modal to close (treat as remind later)
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeModal(false);
+                }
+            });
+        }
+
+        if (btnOk) btnOk.addEventListener('click', () => closeModal(true));
+        if (btnRemind) btnRemind.addEventListener('click', () => closeModal(false));
+        if (btnCloseX) btnCloseX.addEventListener('click', () => closeModal(false));
+
+        // Show modal automatically if not shown before
+        try {
+            const shown = localStorage.getItem(MODAL_KEY);
+            if (!shown) {
+                // small timeout to allow page paint
+                window.requestAnimationFrame(() => setTimeout(openModal, 200));
+            }
+        } catch (e) {
+            // If localStorage isn't available, still show once per session
+            openModal();
+        }
+    })();
 </script>
 </body>
 </html>
